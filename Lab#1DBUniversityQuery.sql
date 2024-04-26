@@ -70,4 +70,37 @@ FROM
 WHERE 
 	RD.SiglaCursoRequisito LIKE 'CI1312'
 
+/*
+e. Recupere la nota máxima, la nota mínima y el promedio de notas obtenidas 
+en el curso ‘CI1221’. Esto debe hacerse en una misma consulta. Dele nombre 
+a las columnas del resultado mediante alias.
+*/
+USE DB_University
 
+SELECT 
+	MAX(L.Nota) AS NotaMax,
+	MIN(L.Nota) AS NotaMin,
+	AVG(L.Nota) AS Promedio
+FROM 
+	Grupo as G
+JOIN 
+	Lleva AS L
+		ON L.SiglaCurso = G.SiglaCurso
+WHERE
+	G.SiglaCurso LIKE 'CI1221'
+
+/*
+f) Recupere el nombre de las Escuelas y el nombre de todas sus Carreras, 
+ordenadas por nombre de Escuela y luego por nombre de Carrera.
+*/
+USE DB_University
+
+SELECT 
+	E.Nombre AS NombreEscuela,
+	C.Nombre AS NombreCarrera
+FROM 
+	Escuela AS E
+LEFT JOIN
+	Carrera AS C
+		ON E.Codigo = C.CodEscuela
+ORDER BY NombreEscuela, NombreCarrera
