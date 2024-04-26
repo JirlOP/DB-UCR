@@ -137,3 +137,36 @@ LEFT JOIN
 		ON E.Cedula = EN.CedEstudiante 
 WHERE EN.CedEstudiante IS NULL
 
+/*
+i) Recupere el nombre de los estudiantes cuyo primer apellido termina en ‘a’. 
+¿Cómo cambiaría la consulta para incluir también a los estudiantes cuyo 
+nombre inicia con M’? ¿Cómo cambiaría la consulta para que solo recupere 
+los estudiantes cuyo primer apellido inicia con ‘M’ y termina con ‘a’?
+*/
+USE DB_University
+-- Part 1
+SELECT 
+	E.NombreP
+FROM 
+	Estudiante AS E
+WHERE 
+	E.Apellido1 LIKE '%a'
+
+-- Part 2
+SELECT 
+	E.NombreP
+FROM 
+	Estudiante AS E
+WHERE 
+	E.Apellido1 LIKE '%a'
+	OR E.NombreP LIKE 'M%'
+
+-- Part 3
+SELECT 
+	E.NombreP
+FROM 
+	Estudiante AS E
+WHERE 
+	E.Apellido1 LIKE '%a'
+	AND E.Apellido1 LIKE 'M%'
+
