@@ -170,3 +170,15 @@ WHERE
 	E.Apellido1 LIKE '%a'
 	AND E.Apellido1 LIKE 'M%'
 
+/*
+k) Recupere el nombre de los estudiantes cuyo nombre tiene exactamente 6 
+caracteres.
+*/
+USE DB_University
+
+SELECT 
+	E.NombreP
+FROM 
+	Estudiante AS E
+WHERE
+	E.NombreP LIKE '______'
