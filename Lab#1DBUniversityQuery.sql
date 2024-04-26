@@ -1,5 +1,7 @@
 /*
 	Query of DB_University
+	Jorge Ricardo Díaz Sagot
+	C12565
 */
 
 /*
