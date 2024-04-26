@@ -182,3 +182,29 @@ FROM
 	Estudiante AS E
 WHERE
 	E.NombreP LIKE '______'
+
+/*
+i) Liste el nombre completo de los profesores y de los estudiantes de género 
+masculino (el resultado debe salir en una sola lista consolidada).
+*/
+USE DB_University
+
+SELECT 
+	NombreP, 
+	Apellido1,
+	Apellido2,
+	Sexo
+FROM 
+	Estudiante
+WHERE 
+	Sexo LIKE 'm'
+UNION
+SELECT
+	NombreP,
+	Apellido1,
+	Apellido2,
+	Sexo
+FROM 
+	Profesor
+WHERE 
+	Sexo LIKE 'm'
