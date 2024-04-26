@@ -7,7 +7,7 @@ a) Recupere el nombre, los apellidos, el número de oficina y la fecha de
 nombramiento de todos los profesores.
 */
 
-USE DB_Univesity
+USE DB_University
 
 SELECT 
 	NombreP, 
@@ -22,7 +22,7 @@ b) Recupere la cédula y el nombre completo de los estudiantes que han llevado
 el curso ‘ART2’. Recupere también la nota que obtuvieron en dicho curso
 */
 
-USE DB_Univesity
+USE DB_University
 
 SELECT 
 	E.Cedula,
@@ -43,7 +43,7 @@ WHERE
 c) Recupere el número de carné y el nombre de los estudiantes que tienen notas 
 entre 60 y 80 en cualquier curso, sin que salgan registros repetidos
 */
-USE DB_Univesity
+USE DB_University
 
 SELECT DISTINCT -- Creo que esto es 
 	E.Carne, E.NombreP
@@ -61,3 +61,13 @@ WHERE
 /*
 d) Recupere la sigla de los cursos que tienen como requisito al curso ‘CI1312’.
 */
+USE DB_University
+
+SELECT 
+	RD.SiglaCursoRequeridor
+FROM 
+	Requiere_De AS RD
+WHERE 
+	RD.SiglaCursoRequisito LIKE 'CI1312'
+
+
