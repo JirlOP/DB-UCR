@@ -121,3 +121,19 @@ LEFT JOIN
 		ON E.Codigo = TE.CodEscuela
 WHERE E.Nombre LIKE '%Compu%'
 	
+
+/*
+h) Recupere la cédula de los estudiantes que no están empadronados en 
+ninguna carrera
+*/
+USE DB_University
+
+SELECT 
+	E.Cedula
+FROM 
+	Estudiante AS E
+LEFT JOIN 
+	Empadronado_en AS EN
+		ON E.Cedula = EN.CedEstudiante 
+WHERE EN.CedEstudiante IS NULL
+
