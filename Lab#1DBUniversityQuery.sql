@@ -208,3 +208,21 @@ FROM
 	Profesor
 WHERE 
 	Sexo LIKE 'm'
+
+
+/*
+m) Recupere el carné y nombre completo de los estudiantes que no tienen 
+número de teléfono (o no se tiene registrado en la base de datos).
+*/
+USE DB_University
+
+SELECT 
+	Carne, 
+	NombreP,
+	Apellido1,
+	Apellido2
+FROM 
+	Estudiante
+WHERE 
+	Teléfono IS NULL
+
