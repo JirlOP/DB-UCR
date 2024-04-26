@@ -104,3 +104,20 @@ LEFT JOIN
 	Carrera AS C
 		ON E.Codigo = C.CodEscuela
 ORDER BY NombreEscuela, NombreCarrera
+
+/*
+g) Recupere la cantidad de profesores que trabajan en la Escuela de 
+Computación e Informática. Suponga que no conoce el código de esta 
+escuela, solo su nombre.
+*/
+USE DB_University
+
+SELECT 
+	COUNT(*) AS CantProfesores
+FROM 
+	Escuela AS E
+LEFT JOIN
+	Trabaja_en AS TE
+		ON E.Codigo = TE.CodEscuela
+WHERE E.Nombre LIKE '%Compu%'
+	
