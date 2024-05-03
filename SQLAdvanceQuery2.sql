@@ -262,6 +262,8 @@ GROUP BY
 
 -- ___________________ The class finish here.
 
+-- Here init with Having clause, that filter on Grouped attr
+
 SELECT 
     ACRONYM, COUNT(*) COURSE_COUNT, AVG (CREDITS) AS AVG_CREDITS
 FROM 
@@ -271,10 +273,14 @@ GROUP BY
 HAVING 
     AVG (CREDITS) > 3;
 
+-- ________________ Update a table Schema
+
 ALTER TABLE 
     INSTRUCTOR
 ADD
     NAME VARCHAR(255) NULL
+
+-- ________________  add Names and IDs cause are the PK
 
 INSERT INTO 
     INSTRUCTOR (NAME)
@@ -283,11 +289,13 @@ VALUES
     ('Mary Doe'),
     ('Elle Doe')
 
+-- Try to insert that object into IMPARTS table.
 INSERT INTO 
     IMPARTS
 VALUES 
     (1,10,2,2023,'ENG101')
 
+-- How much courses Impart each Instructor.
 SELECT 
     I.NAME AS I_NAME, COUNT(*) AS COUNT_G
 FROM
@@ -306,22 +314,26 @@ GROUP BY
 DML Triggers are fired as a response to dml statements (**insert, update or delete**).  
 A dml trigger can be created to address one or more dml events for a single table or view. This means that a single dml trigger can handle inserting, updating and deleting records from a specific table or view, but in can only handle data being changed on that single table or view.
 */
-
+USE DB_JP_SQL_BASICO
 SELECT * FROM SCHOOL;
 SELECT * FROM COURSE;
 SELECT * FROM [GROUP];
 
+-- Alter table course to add new attr 
 ALTER TABLE 
     COURSE
 ADD 
     AREA_ACRONYM CHAR(6) NULL
     CONSTRAINT FK_SCHOOL FOREIGN KEY (AREA_ACRONYM) REFERENCES SCHOOL(ACRONYM)
 
+-- Set values to new relation with SCHOOL
 UPDATE [COURSE] SET AREA_ACRONYM = 'EMat' WHERE ACRONYM = 'MA101';
 UPDATE [COURSE] SET AREA_ACRONYM = 'EAT' WHERE ACRONYM = 'HT101';
 UPDATE [COURSE] SET AREA_ACRONYM = 'ECCI' WHERE ACRONYM = 'CS101';
 UPDATE [COURSE] SET AREA_ACRONYM = 'ELM' WHERE ACRONYM = 'ENG101';
 UPDATE [COURSE] SET AREA_ACRONYM = 'ECCI' WHERE ACRONYM = 'PHY101';
+
+-- If we update on TAKES updates students number in SCHOOL
 
 CREATE TRIGGER 
     UPDATE_STUDENTS_NUMBER
@@ -339,7 +351,7 @@ BEGIN -- Open a new code block (optional)
             SELECT 
                  C.AREA_ACRONYM, COUNT(AREA_ACRONYM) as GCOUNT
             FROM 
-                inserted AS NEW_TAKES
+                inserted AS NEW_TAKES -- "inserted" is the temp table that have the new values do update
             JOIN 
                 [GROUP] AS G
             ON
