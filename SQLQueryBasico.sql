@@ -8,7 +8,7 @@
  /* Nombres de database en este formato */
 CREATE DATABASE DB_JP_SQL_BASICO
 /* Ejecuta un batch de operaciones */
-GO 
+GO
 
 /* USE me permite empezar a usar la base de datos, como seleccionarla */
 USE DB_JP_SQL_BASICO
@@ -37,8 +37,8 @@ CREATE TABLE STUDENT (
 /*INSTRUCTOR*/
 
 CREATE TABLE INSTRUCTOR (
-   ID INT NOT NULL IDENTITY(1,1) PRIMARY KEY, 
-   -- IDENTITY es único de SQL Server Microsoft. auto incrementales aumenta en 1 a 1 el ID.
+   ID INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+   -- IDENTITY es ï¿½nico de SQL Server Microsoft. auto incrementales aumenta en 1 a 1 el ID.
    -- Asigna a cada Instructor un ID desde 1 hasta N, pero si se elimina un instructor no se reasigna el numero.
 )
 
@@ -46,9 +46,9 @@ CREATE TABLE INSTRUCTOR (
 
 CREATE TABLE COURSE (
     ACRONYM CHAR(6) NOT NULL,
-    /* ACRONYM CHAR(6) PRIMARY KEY*/ 
-    NAME VARCHAR(50) NOT NULL, 
-    CREDITS INT NOT NULL, 
+    /* ACRONYM CHAR(6) PRIMARY KEY*/
+    NAME VARCHAR(50) NOT NULL,
+    CREDITS INT NOT NULL,
     CHECK (CREDITS > 0 AND CREDITS < 13), -- Simple Validation only for SQL Server.
     UNIQUE (NAME),
     PRIMARY KEY (ACRONYM)
@@ -57,19 +57,19 @@ CREATE TABLE COURSE (
 /*GROUP*/
 
 CREATE TABLE [GROUP] ( -- It has "[]" 'cause is a reserved keywords of SQL
-    NUMBER SMALLINT, 
+    NUMBER SMALLINT,
     SEMESTER SMALLINT,
     YEAR SMALLINT,
     ACRONYM CHAR (6) NOT NULL,
     PRIMARY KEY (NUMBER,SEMESTER,YEAR,ACRONYM),
-    FOREIGN KEY (ACRONYM) REFERENCES COURSE(ACRONYM)  
+    FOREIGN KEY (ACRONYM) REFERENCES COURSE(ACRONYM)
 )
 
 /*IMPARTS*/
 
 CREATE TABLE IMPARTS (
     ID INT,
-    NUMBER SMALLINT, 
+    NUMBER SMALLINT,
     SEMESTER SMALLINT,
     YEAR SMALLINT,
     ACRONYM CHAR (6) NOT NULL
@@ -82,7 +82,7 @@ CREATE TABLE IMPARTS (
 
 CREATE TABLE TAKES (
     EMAIL VARCHAR(255),
-    NUMBER SMALLINT, 
+    NUMBER SMALLINT,
     SEMESTER SMALLINT,
     YEAR SMALLINT,
     ACRONYM CHAR (6),
@@ -97,7 +97,7 @@ CREATE TABLE TAKES (
             ON DELETE NO ACTION /*default behavior*/
             ON DELETE SET NULL
             ON DELETE SET DEFAULT
-            ON DELETE CASCADE  Recursive Delete 
+            ON DELETE CASCADE  Recursive Delete
             ON UPDATE NO ACTION
             ON UPDATE SET NULL
             ON UPDATE SET DEFAULT
@@ -138,9 +138,9 @@ CREATE TABLE SCHOOL (
 USE DB_JP_SQL_BASICO
 GO
 
-INSERT INTO 
-    SCHOOL (NAME,ACRONYM,PHONE_NUMBER,NUM_OF_STUDENTS) 
-VALUES 
+INSERT INTO
+    SCHOOL (NAME,ACRONYM,PHONE_NUMBER,NUM_OF_STUDENTS)
+VALUES
     ('Ciencias de la Computacion', 'ECCI', '22118000', 888),
     ('Ciencias de la Comunicacion Colectiva', 'ECCC', '22113600', 999),
     ('Lenguas Modernas', 'ELM', '22118391', NULL),
@@ -166,7 +166,7 @@ WHERE NUM_OF_STUDENTS IS NOT NULL
 ORDER BY ACRONYM ASC /*DESC*/
 
 
-SELECT TOP (2) * 
+SELECT TOP (2) *
 FROM SCHOOL
 WHERE NUM_OF_STUDENTS IS NOT NULL
 ORDER BY ACRONYM ASC /*DESC*/
@@ -195,7 +195,7 @@ FROM SCHOOL
 
 DELETE FROM SCHOOL
 
-DELETE FROM SCHOOL 
+DELETE FROM SCHOOL
 WHERE NUM_OF_STUDENTS = 1
 
 /*
