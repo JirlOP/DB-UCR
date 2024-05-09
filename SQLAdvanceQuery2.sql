@@ -652,7 +652,12 @@ DECLARE @S_NAME VARCHAR(255), @NUM_OF_STUDENTS INT
 
 -- LOCAL: Solo visible para este batch de instrucciones y no para los eventos desencadenadores
 -- FAST_FORWARD: Solo se desplaza hacia adelante, de primera fila a ultima
-DECLARE ROW_CURSOR CURSOR LOCAL FAST_FORWARD FOR 
+/*
+Declaramos un cursor que primero va a ser busqueda LOCAL y después FAST_FORWARD.
+FOR definidos en que queremos iterar
+Con OPEN ponemos a funcionar el CURSOR
+*/
+DECLARE ROW_CURSOR CURSOR LOCAL FAST_FORWARD FOR  -- Hay varios tipos de cursores dependiento del Data Source
     (SELECT NAME, NUM_OF_STUDENTS FROM SCHOOL)
 
 -- Siempre se debe abrir el cursor primero
@@ -661,7 +666,7 @@ OPEN ROW_CURSOR
 
 FETCH NEXT FROM ROW_CURSOR INTO @S_NAME, @NUM_OF_STUDENTS
 -- Varibale global siempre, cuando no hay mas filas cambia a 1 
-WHILE @@FETCH_STATUS = 0
+WHILE @@FETCH_STATUS = 0 -- @@ variables dinámicas del sistema
 BEGIN
     PRINT CONCAT('The school name is: ',@S_NAME,'. It has ', @NUM_OF_STUDENTS, ' students')
     -- mover cursor a la siguiente fila
@@ -670,7 +675,13 @@ END
 
 --- Siempre cerrar el cursor y liberar la memoria usada
 CLOSE ROW_CURSOR
-DEALLOCATE ROW_CURSOR
+DEALLOCATE ROW_CURSOR -- Desreferencia el cursos en disco para cerrar su coneixión a disco.
+
+
+/*
+	New CURSOR to validate if there are students en each SCHOOL
+	Same script as above but with conditionals.
+*/
 
 USE DB_JP_SQL_BASICO
 
