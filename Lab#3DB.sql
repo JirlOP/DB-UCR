@@ -1,10 +1,11 @@
 /*
 Laboratorio 3
-Jorge Ricardo D�az Sagot - C12565
+Jorge Ricardo Díaz Sagot - C12565
 */
 
 
 USE DB_University
+GO
 /*
 SELECT * FROM tabla1 t1 JOIN tabla2 t2 ON t1.a = t2.b JOIN tabla3 t3 ON t3.c = t2.c
 Three table join example
@@ -35,9 +36,9 @@ sigla del curso, n�mero de grupo, semestre, a�o(Grupo) y nota(Lleva)) de los
 matriculado, y el nivel del plan de estudios en el que est� cada uno de los cursos
 aprobados. El listado debe ordenarse por nivel del plan de estudios, y luego por sigla.
 */
-SELECT *
-FROM LLEVA
-WHERE CedEstudiante LIKE '22123456'
+--SELECT *
+--FROM LLEVA
+--WHERE CedEstudiante LIKE '22123456'
 
 
 SELECT
@@ -122,7 +123,7 @@ GROUP BY
 suma de la carga de cada uno de sus participantes)(Participa en). La columna del total debe
 nombrarse como TotalCarga.
 */
-SELECT * FROM Participa_en
+--SELECT * FROM Participa_en
 -- SELECT * FROM Investigacion
 
 SELECT
@@ -159,9 +160,9 @@ listado con cero en la cantidad de carreras. Ordene descendentemente por cantida
 carreras (de la facultad que tiene más carreras la que tiene menos). Finalmente, la
 columna de la cantidad de carreras debe nombrarse como CantidadCarreras.
 */
-SELECT * FROM Facultad
-SELECT * FROM Carrera
-SELECT * FROM CURSO
+--SELECT * FROM Facultad
+--SELECT * FROM Carrera
+--SELECT * FROM CURSO
 
 SELECT
 	Fac.Nombre,
@@ -189,8 +190,8 @@ estudiantes matriculados, deben salir en el listado con cero en la cantidad de
 estudiantes(Tabla Grupo). Ordene por año, luego por semestre, y finalmente por sigla y grupo.
 */
 
-SELECT * FROM Lleva
-SELECT * FROM Grupo
+--SELECT * FROM Lleva
+--SELECT * FROM Grupo
 
 SELECT
 	Gru.NumGrupo,
@@ -200,7 +201,7 @@ SELECT
 	COUNT(Lle.CedEstudiante) AS CantidadEstudiantes
 FROM
 	Lleva AS Lle
-RIGHT JOIN
+RIGHT JOIN -- Para que salgan los grupos que no tienen estudiantes
 	Grupo AS Gru
 	ON Lle.SiglaCurso = Gru.SiglaCurso
 	AND Lle.Anno = Gru.Anno
@@ -220,5 +221,30 @@ ORDER BY
 	Gru.NumGrupo
 
 /*
-13
+13. Liste los grupos (identificados por sigla de curso, número de grupo, semestre y año)
+donde la nota mínima obtenida por los estudiantes fue mayor o igual a 70 (es decir,
+todos los estudiantes aprobaron). Muestre también la nota mínima (MinimaNota),
+máxima (MaximaNota), y promedio (Promedio) de cada grupo en el resultado. Ordene
+el resultado descendentemente por el promedio de notas del grupo
 */
+SELECT
+	SiglaCurso,
+	NumGrupo,
+	Semestre,
+	Anno,
+	MIN(Nota) AS MinimaNota,
+	MAX(Nota) AS MaximaNota,
+	AVG(Nota) AS Promedio
+FROM
+	Lleva
+GROUP BY
+	SiglaCurso,
+	NumGrupo,
+	Semestre,
+	Anno
+HAVING
+	MIN(Nota) >= 70
+ORDER BY
+	Promedio DESC
+
+
