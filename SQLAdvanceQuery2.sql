@@ -10,42 +10,42 @@ SELECT * FROM SCHOOL;
 
 USE DB_JP_SQL_BASICO
 
-SELECT 
+SELECT
     *
 FROM
-    SCHOOL 
+    SCHOOL
 WHERE NUM_OF_STUDENTS IS NULL
 
 -- __________________
 
 USE DB_JP_SQL_BASICO
 
-SELECT 
+SELECT
     *
 FROM
-    SCHOOL 
+    SCHOOL
 WHERE NUM_OF_STUDENTS IS NOT NULL
 
 -- ______________________
 
 USE DB_JP_SQL_BASICO
 
-SELECT 
+SELECT
     NAME, ACRONYM
 FROM
-    SCHOOL 
-WHERE 
+    SCHOOL
+WHERE
     NUM_OF_STUDENTS IS NOT NULL
 AND
     NAME LIKE 'C%a' -- LIKE is Regex but powerless
 
 USE DB_JP_SQL_BASICO
 
-SELECT 
+SELECT
     NAME, ACRONYM, NUM_OF_STUDENTS
 FROM
-    SCHOOL 
-WHERE 
+    SCHOOL
+WHERE
     NUM_OF_STUDENTS IS NOT NULL
 AND
     (
@@ -66,18 +66,18 @@ SELECT * FROM COURSE
 
 SELECT * FROM [GROUP]
 
-INSERT INTO 
+INSERT INTO
     COURSE (ACRONYM, NAME, CREDITS)
-VALUES 
+VALUES
     ('CS101', 'Intro to Computer Science', 3),
     ('MA101', 'Calculus I', 4),
     ('PHY101', 'Physics I', 4),
     ('HT101', 'History of World Civilization', 3),
     ('ENG101', 'English Composition', 3)
 
-INSERT INTO 
+INSERT INTO
     [GROUP] (NUMBER, SEMESTER, YEAR, ACRONYM)
-VALUES 
+VALUES
     (1, 1, 2023, 'CS101'),
     (3, 1, 2023, 'PHY101'),
     (4, 1, 2023, 'HT101'),
@@ -91,13 +91,13 @@ VALUES
 
 -- ______________________________
 
-SELECT 
+SELECT
     NAME, CREDITS
 FROM
     COURSE
 WHERE ACRONYM IN -- We search ACRONYM inside of the thins of the scope
     (
-        SELECT 
+        SELECT
             ACRONYM
         FROM
             [GROUP]
@@ -107,41 +107,41 @@ WHERE ACRONYM IN -- We search ACRONYM inside of the thins of the scope
 
 -- _______________________________
 
-SELECT 
+SELECT
     ACRONYM
 FROM
     COURSE
 WHERE NOT EXISTS
     (
-        SELECT 
+        SELECT
            *
         FROM
             [GROUP]
         WHERE
             [GROUP].ACRONYM = [COURSE].ACRONYM
         AND
-            [GROUP].SEMESTER = 2 
-        AND 
+            [GROUP].SEMESTER = 2
+        AND
             [GROUP].[YEAR] = 2023
     )
 
 -- ____________________________
 -- EXIST y NOT EXIST review if the SELECT clause match with the WHERE anid.
-SELECT 
+SELECT
     ACRONYM AS ACR, NAME as CourseName
 FROM
     COURSE AS C
-WHERE EXISTS /*NOT EXISTS*/ 
+WHERE EXISTS /*NOT EXISTS*/
     (
-        SELECT 
+        SELECT
            *
         FROM
             [GROUP] as G
         WHERE
             C.ACRONYM = G.ACRONYM
         AND
-            G.SEMESTER = 2 
-        AND 
+            G.SEMESTER = 2
+        AND
             G.YEAR = 2023
     )
 
@@ -159,12 +159,12 @@ SELECT * FROM [GROUP], COURSE
 
 USE DB_JP_SQL_BASICO
 -- Intersection of same attr A&B
-SELECT 
+SELECT
     C.NAME, C.CREDITS, G.NUMBER, G.SEMESTER AS SEM, G.[YEAR]
-FROM 
-    COURSE AS C 
+FROM
+    COURSE AS C
 INNER JOIN -- INNER is not necessary
-    [GROUP] AS G 
+    [GROUP] AS G
 ON -- Related PK with FK
     C.ACRONYM = G.ACRONYM
 ORDER BY
@@ -174,16 +174,16 @@ ORDER BY
 
 USE DB_JP_SQL_BASICO
 -- A - B
-SELECT 
+SELECT
     C.ACRONYM, C.NAME, C.CREDITS, G.NUMBER, G.SEMESTER, G.[YEAR]
-FROM 
+FROM
     COURSE AS C -- A
-LEFT JOIN 
+LEFT JOIN
     [GROUP] AS G -- B
-ON 
+ON
     C.ACRONYM = G.ACRONYM
 WHERE -- If we want the Intersection (A-B+A&B) Erase this where
-	G.ACRONYM IS NULL 
+	G.ACRONYM IS NULL
 ORDER BY
     G.NUMBER, G.SEMESTER, G.[YEAR]
 
@@ -191,14 +191,14 @@ ORDER BY
 
 USE DB_JP_SQL_BASICO
 -- The base query is bad 'cause we define before GROUP dependent of COURSE
--- B - A 
-SELECT 
+-- B - A
+SELECT
     C.NAME, C.CREDITS, G.NUMBER, G.SEMESTER, G.[YEAR]
-FROM 
-    COURSE AS C 
-RIGHT JOIN 
-    [GROUP] AS G 
-ON 
+FROM
+    COURSE AS C
+RIGHT JOIN
+    [GROUP] AS G
+ON
     C.ACRONYM = G.ACRONYM
 WHERE -- If we erase this is B - A & B&A
     C.ACRONYM IS NULL
@@ -209,13 +209,13 @@ ORDER BY
 
 USE DB_JP_SQL_BASICO
 
-SELECT 
+SELECT
     C.NAME, C.CREDITS, G.NUMBER, G.SEMESTER, G.[YEAR]
-FROM 
-    COURSE AS C 
-FULL OUTER JOIN 
-    [GROUP] AS G 
-ON 
+FROM
+    COURSE AS C
+FULL OUTER JOIN
+    [GROUP] AS G
+ON
     C.ACRONYM = G.ACRONYM
 ORDER BY
     G.NUMBER, G.SEMESTER, G.[YEAR]
@@ -224,15 +224,15 @@ ORDER BY
 
 USE DB_JP_SQL_BASICO
 
-SELECT 
+SELECT
     C.NAME, C.CREDITS, G.NUMBER, G.SEMESTER, G.[YEAR]
-FROM 
-    COURSE AS C 
-FULL OUTER JOIN 
-    [GROUP] AS G 
-ON 
+FROM
+    COURSE AS C
+FULL OUTER JOIN
+    [GROUP] AS G
+ON
     C.ACRONYM = G.ACRONYM
-WHERE 
+WHERE
     C.ACRONYM IS NULL OR G.ACRONYM IS NULL
 ORDER BY
     G.NUMBER, G.SEMESTER, G.[YEAR]
@@ -241,7 +241,7 @@ ORDER BY
 # 4. Grouping and aggregation
 */
 
-SELECT 
+SELECT
     ACRONYM, NUMBER, COUNT(*) AS ACR_COUNT
 FROM
     [GROUP]
@@ -249,55 +249,58 @@ GROUP BY ACRONYM,NUMBER
 
 -- __________________
 
-SELECT 
-    ACRONYM, 
-    COUNT(*) AS ACR_COUNT, 
-    AVG (CREDITS) AS ACR_AVG, 
-    MAX(CREDITS) AS ACR_MAX, 
+SELECT
+    ACRONYM,
+    COUNT(*) AS ACR_COUNT,
+    AVG (CREDITS) AS ACR_AVG,
+    MAX(CREDITS) AS ACR_MAX,
     MIN(CREDITS) AS ACR_MIN
-FROM 
+FROM
     COURSE
-GROUP BY 
+GROUP BY
     ACRONYM
 
 -- ___________________ The class finish here.
 
 -- Here init with Having clause, that filter on Grouped attr
 
-SELECT 
-    ACRONYM, COUNT(*) COURSE_COUNT, AVG (CREDITS) AS AVG_CREDITS
-FROM 
+SELECT
+    ACRONYM,
+    COUNT(*) COURSE_COUNT,
+    AVG (CREDITS) AS AVG_CREDITS
+FROM
     COURSE
-GROUP BY 
+GROUP BY
     ACRONYM
-HAVING 
+HAVING
     AVG (CREDITS) > 3;
 
 -- ________________ Update a table Schema
 
-ALTER TABLE 
+ALTER TABLE
     INSTRUCTOR
 ADD
     NAME VARCHAR(255) NULL
 
 -- ________________  add Names and IDs cause are the PK
 
-INSERT INTO 
+INSERT INTO
     INSTRUCTOR (NAME)
-VALUES 
+VALUES
     ('Joe Doe'),
     ('Mary Doe'),
     ('Elle Doe')
 
 -- Try to insert that object into IMPARTS table.
-INSERT INTO 
+INSERT INTO
     IMPARTS
-VALUES 
+VALUES
     (1,10,2,2023,'ENG101')
 
 -- How much courses Impart each Instructor.
-SELECT 
-    I.NAME AS I_NAME, COUNT(*) AS COUNT_G
+SELECT
+    I.NAME AS I_NAME,
+	COUNT(*) AS COUNT_G
 FROM
     INSTRUCTOR AS I
 -- LEFT JOIN
@@ -310,19 +313,21 @@ GROUP BY
 
 /*
 ## **5\. Triggers**
-
-DML Triggers are fired as a response to dml statements (**insert, update or delete**).  
-A dml trigger can be created to address one or more dml events for a single table or view. This means that a single dml trigger can handle inserting, updating and deleting records from a specific table or view, but in can only handle data being changed on that single table or view.
+DML Triggers are fired as a response to dml statements (**insert, update or delete**).
+A dml trigger can be created to address one or more dml events for a single table or view.
+This means that a single dml trigger can handle inserting, updating and deleting records
+from a specific table or view, but it can only handle data being changed on that single table or view.
 */
 USE DB_JP_SQL_BASICO
 SELECT * FROM SCHOOL;
 SELECT * FROM COURSE;
 SELECT * FROM [GROUP];
+SELECT * FROM TAKES
 
--- Alter table course to add new attr 
-ALTER TABLE 
+-- Alter table course to add new attr
+ALTER TABLE
     COURSE
-ADD 
+ADD
     AREA_ACRONYM CHAR(6) NULL
     CONSTRAINT FK_SCHOOL FOREIGN KEY (AREA_ACRONYM) REFERENCES SCHOOL(ACRONYM)
 
@@ -333,26 +338,27 @@ UPDATE [COURSE] SET AREA_ACRONYM = 'ECCI' WHERE ACRONYM = 'CS101';
 UPDATE [COURSE] SET AREA_ACRONYM = 'ELM' WHERE ACRONYM = 'ENG101';
 UPDATE [COURSE] SET AREA_ACRONYM = 'ECCI' WHERE ACRONYM = 'PHY101';
 
+/*
 -- If we update on TAKES updates students number in SCHOOL
-
-CREATE TRIGGER 
+*/
+CREATE TRIGGER
     UPDATE_STUDENTS_NUMBER
-ON 
-    TAKES
-AFTER INSERT AS
+ON
+    TAKES  -- Here we define the table that will be trigger
+AFTER INSERT AS -- Here we define the event that will trigger the trigger(INSERT)
 
 BEGIN -- Open a new code block (optional)
-    UPDATE 
+    UPDATE
         SCHOOL
-    SET 
-        NUM_OF_STUDENTS = NUM_OF_STUDENTS + 
+    SET
+        NUM_OF_STUDENTS = NUM_OF_STUDENTS +
         T.GCOUNT FROM
         (
-            SELECT 
+            SELECT
                  C.AREA_ACRONYM, COUNT(AREA_ACRONYM) as GCOUNT
-            FROM 
+            FROM
                 inserted AS NEW_TAKES -- "inserted" is the temp table that have the new values do update
-            JOIN 
+            JOIN
                 [GROUP] AS G
             ON
                 NEW_TAKES.ACRONYM = G.ACRONYM AND
@@ -361,17 +367,26 @@ BEGIN -- Open a new code block (optional)
                 NEW_TAKES.[YEAR] = G.[YEAR]
             JOIN
                 COURSE AS C
-            ON 
-                C.ACRONYM = G.ACRONYM 
+            ON
+                C.ACRONYM = G.ACRONYM
             GROUP BY C.AREA_ACRONYM
         ) AS T -- New local variable as table a.k.a query result
-    WHERE 
+    WHERE
         SCHOOL.ACRONYM = T.AREA_ACRONYM
-END -- Close the code block 
+END -- Close the code block
 
+
+--______________________________________________
+
+
+/*
+At this point if STUDENT is empty, when we add a new student, the trigger will
+wont work, cause the table is empty. So we need to add a new student to test the trigger.
+If we add a new student, the trigger in student not work, cause the trigger is in TAKES.
+*/
 SELECT * FROM STUDENT
 
-INSERT INTO 
+INSERT INTO
     STUDENT
 VALUES
     ('jose@email.com','Jose','Ramirez','B65728',NULL),
@@ -379,14 +394,27 @@ VALUES
 
 SELECT * FROM TAKES
 
-INSERT INTO 
+/*
+Esto cambia el n煤mero de estudiantes en el curso CS101,
+o sea va a activar al trigger de arriba aumentando el constador
+de los estudiantes de SCHOOL de la escuela de compu.
+*/
+INSERT INTO
     TAKES
 VALUES
     ('jose@email.com',1,1,2023,'CS101'),
     ('petter@email.com',6,2,2023,'CS101')
 
-ALTER TRIGGER UPDATE_STUDENTS_NUMBER
-ON 
+/*
+En este caso, el trigger va a hacer dos cosas:
+1. Aumentar el contador de estudiantes en la escuela de compu
+2. Disminuir el contador de estudiantes en la escuela de compu
+Porque tiene propiedades ON INSERT, DELETE
+PERO estamos redundando el c贸digo, podemos hacerlo con otra t茅cnica m谩s
+eficiente.
+*/
+ALTER TRIGGER UPDATE_STUDENTS_NUMBER -- ALTER moadifica el trigger
+ON
     TAKES
 AFTER INSERT, DELETE
 AS
@@ -394,17 +422,17 @@ BEGIN
 
     /*Insert*/
 
-    UPDATE 
+    UPDATE
         SCHOOL
-    SET 
-        NUM_OF_STUDENTS = NUM_OF_STUDENTS + 
+    SET
+        NUM_OF_STUDENTS = NUM_OF_STUDENTS +
         T.GCOUNT FROM
         (
-            SELECT 
+            SELECT
                  C.AREA_ACRONYM, COUNT(AREA_ACRONYM) as GCOUNT
-            FROM 
+            FROM
                 inserted AS NEW_TAKES /*inserted, deleted, updated*/
-            JOIN 
+            JOIN
                 [GROUP] AS G
             ON
                 NEW_TAKES.ACRONYM = G.ACRONYM AND
@@ -413,26 +441,26 @@ BEGIN
                 NEW_TAKES.[YEAR] = G.[YEAR]
             JOIN
                 COURSE AS C
-            ON 
-                C.ACRONYM = G.ACRONYM 
+            ON
+                C.ACRONYM = G.ACRONYM
             GROUP BY C.AREA_ACRONYM
         ) AS T
-    WHERE 
+    WHERE
         SCHOOL.ACRONYM = T.AREA_ACRONYM
 
      /*Delete*/
 
-    UPDATE 
+    UPDATE
         SCHOOL
-    SET 
-        NUM_OF_STUDENTS = NUM_OF_STUDENTS - 
+    SET
+        NUM_OF_STUDENTS = NUM_OF_STUDENTS -
         T.GCOUNT FROM
         (
-            SELECT 
+            SELECT
                  C.AREA_ACRONYM, COUNT(AREA_ACRONYM) as GCOUNT
-            FROM 
+            FROM
                 deleted AS DELETED_TAKES /*inserted, deleted, updated*/
-            JOIN 
+            JOIN
                 [GROUP] AS G
             ON
                 DELETED_TAKES.ACRONYM = G.ACRONYM AND
@@ -441,27 +469,43 @@ BEGIN
                 DELETED_TAKES.[YEAR] = G.[YEAR]
             JOIN
                 COURSE AS C
-            ON 
-                C.ACRONYM = G.ACRONYM 
+            ON
+                C.ACRONYM = G.ACRONYM
             GROUP BY C.AREA_ACRONYM
         ) AS T
-    WHERE 
+    WHERE
         SCHOOL.ACRONYM = T.AREA_ACRONYM
 
 END
 
-DELETE FROM TAKES
+-----------------------
+-- Se borra takes para probar el nuevo trigger
+SELECT * FROM TAKES
+SELECT * FROM SCHOOL
+DELETE FROM TAKES -- Aqu铆 se le borran los dos estudiantes de TAKES
+-- O sea, quita dos estudiantes de la ECCI en SCHOOL
+
+-----------------------
 
 /*
 # 6. Views
 */
+USE DB_JP_SQL_BASICO
 
 CREATE VIEW FULL_STUDENT_BOARD AS
-SELECT 
-        ST.FIRST_NAME, ST.LAST_NAME,T.EMAIL, T.NUMBER, T.SEMESTER, T.[YEAR], G.ACRONYM, C.NAME, C.AREA_ACRONYM
-FROM 
+SELECT
+        ST.FIRST_NAME,
+		ST.LAST_NAME,
+		T.EMAIL,
+		T.NUMBER,
+		T.SEMESTER,
+		T.[YEAR],
+		G.ACRONYM,
+		C.NAME,
+		C.AREA_ACRONYM
+FROM
     TAKES AS T
-JOIN 
+JOIN
     [GROUP] AS G
 ON
     T.ACRONYM = G.ACRONYM AND
@@ -472,19 +516,28 @@ JOIN
     COURSE AS C
 ON
     C.ACRONYM = G.ACRONYM
-JOIN 
+JOIN
     STUDENT AS ST
 ON
     ST.EMAIL = T.EMAIL
 
+
+/* --------------
+Aqu铆 nosotros llamamos al m茅todo que cre贸 la view
+---------------*/
 SELECT * FROM FULL_STUDENT_BOARD
 
-/*
-## **7\. Stored procedures**  
 
-In SQL Server, a procedure is a stored program that you can pass parameters into. It does not return a value like a function does. However, it can return a success/failure status to the procedure that called it.
+
+
+/* ---------------------------------------------------------------------------------
+## **7\. Stored procedures**
+In SQL Server, a procedure is a stored program that you can pass parameters into.
+It does not return a value like a function does.
+However, it can return a success/failure status to the procedure that called it.
 */
 
+-- Declara la funci贸n que nos devuelve el Acronimo de un curso.
 CREATE PROCEDURE GetCourseName (
     @ACRONYM CHAR(6) -- Input parameter
 )
@@ -494,24 +547,30 @@ FROM COURSE
 WHERE ACRONYM = @ACRONYM
 END
 
+-- Ejecuta la funci贸n declarada
 EXECUTE GetCourseName @ACRONYM = 'CS101';
 
-/*Store procedure with no return, but output parameters*/
 
+
+/*
+Store procedure with no return, but output parameters
+*/
 CREATE PROCEDURE GetEmptySchoolsCount (
     @PEmptySchoolsCount INT OUTPUT
 )
 AS
 BEGIN
-    SELECT 
+    SELECT
         @PEmptySchoolsCount = COUNT(*)
     FROM
         SCHOOL
     WHERE NUM_OF_STUDENTS = 0
 END
 
-/*We can create/change variables in SQL*/
 
+/*
+We can create/change variables in SQL
+*/
 DECLARE @EmptySchoolsCount INT;
 
 EXEC GetEmptySchoolsCount @PEmptySchoolsCount = @EmptySchoolsCount OUTPUT;
@@ -524,48 +583,52 @@ PRINT 'Schools with zero students X 2: ' + CONVERT(VARCHAR(10),@EmptySchoolsCoun
 
 /*
 ## 8. User defined functions
-
-1. User-defined functions can't be used to perform actions that modify the database state.
-2. User-defined functions can't contain an OUTPUT INTO clause that has a table as its targe
-3. User-defined functions can't return multiple result sets. Use a stored procedure if you need to return multiple result sets.
+1. User-defined functions can't be used to perform actions that
+modify the database state.
+2. User-defined functions can't contain an OUTPUT INTO clause
+that has a table as its target.
+3. User-defined functions can't return multiple result sets.
+Use a stored procedure if you need to return multiple result sets.
 */
 
 CREATE FUNCTION GetTotalUniversityStudents(
-    @SchoolPattern VARCHAR(10)
+    @SchoolPattern VARCHAR(10) -- Variable to search
 )
 RETURNS INT /*Return type must be specified. This is an scalar function*/
 AS
 BEGIN
+    -- Return variable
+    DECLARE @OutStudentsCount INT
 
-    DECLARE @StudentsCount INT;
-
-    IF @SchoolPattern IS NOT NULL 
-    
-    BEGIN
-
-        SELECT 
-            @StudentsCount = SUM(NUM_OF_STUDENTS)
-        FROM SCHOOL
-
-        WHERE 
+    IF @SchoolPattern IS NOT NULL -- Si no es nulo suma todos los estudiantes de las escuelas que cumplan con el patr贸n
+    BEGIN -- Scope del if
+        SELECT
+            @OutStudentsCount = SUM(NUM_OF_STUDENTS)
+        FROM
+            SCHOOL
+        WHERE
             NAME LIKE @SchoolPattern
     END
-    ELSE
+    ELSE -- Si es nulo suma todos los estudiantes de todas las escuelas
     BEGIN
-        SELECT 
-            @StudentsCount = SUM(NUM_OF_STUDENTS)
-        FROM SCHOOL
+        SELECT
+            @OutStudentsCount = SUM(NUM_OF_STUDENTS)
+        FROM
+            SCHOOL
     END
 
-    IF @StudentsCount IS NULL
+    -- Esto es redundante, pero es un ejemplo de c贸mo se puede hacer
+    IF @OutStudentsCount IS NULL -- Si no hay estudiantes, devuelve 0
         BEGIN
-            SET @StudentsCount = 0
+            SET @OutStudentsCount = 0
         END
 
-    RETURN @StudentsCount;
-END;
+    RETURN @OutStudentsCount
+END
 
-
+/*
+Tengo que llama a ejecutar la funci贸n de manera que todo haga match.
+*/
 DECLARE @SchoolPattern VARCHAR(100)
 
 DECLARE @Result int
@@ -576,23 +639,37 @@ EXEC @Result = GetTotalUniversityStudents @SchoolPattern = @SchoolPattern
 
 PRINT @Result
 
+------------------------------------------------------------
+
+/*
+Funci贸n para obtener los estudiantes de una escuela
+CREATE OR ALTER nos permite modificar la funci贸n sin tener que borrarla y volverla a crear
+Este devuelve una tabla.
+*/
+USE DB_JP_SQL_BASICO
 CREATE OR ALTER FUNCTION GetSchoolStudents( /*https://support.microsoft.com/en-gb/topic/kb3190548-update-introduces-create-or-alter-transact-sql-statement-in-sql-server-2016-fd0596f3-9098-329c-a7a5-2e18f29ad1d4*/
     @SchoolPattern VARCHAR(10)
 )
 RETURNS TABLE
 AS
     RETURN (
-        SELECT 
-            S.NAME, S.ACRONYM as SCHOOL_ACR, C.ACRONYM AS COURSE_ACR, g.NUMBER, G.SEMESTER, G.[YEAR], T.EMAIL
+        SELECT
+            S.NAME,
+            S.ACRONYM AS SCHOOL_ACR,
+            C.ACRONYM AS COURSE_ACR,
+            G.NUMBER,
+            G.SEMESTER,
+            G.[YEAR],
+            T.EMAIL
         FROM
             SCHOOL AS S
         INNER JOIN
             COURSE AS C
-        ON 
+        ON
             S.ACRONYM = C.AREA_ACRONYM
         INNER JOIN
             [GROUP] AS G
-        ON 
+        ON
             G.ACRONYM = C.ACRONYM
         INNER JOIN
             TAKES AS T
@@ -605,7 +682,9 @@ AS
             S.NAME LIKE @SchoolPattern
 )
 
-/*Create an variable of table type*/
+/*
+Create an variable of table type to receive a table of the function.
+*/
 
 DECLARE @TMP_TABLE TABLE (
     NAME VARCHAR(255),
@@ -617,29 +696,38 @@ DECLARE @TMP_TABLE TABLE (
     EMAIL VARCHAR(255)
 )
 
-/*Populate a table variable. Will make more sense once we are in the relational algebra section. Take it easy :)*/
 
-INSERT INTO 
+-- Populate a table variable. Will make more sense once we are in the relational algebra section. Take it easy :)
+INSERT INTO
     @TMP_TABLE
 SELECT * FROM GetSchoolStudents('%A%')
 
+-- Print the table variable
 SELECT * FROM @TMP_TABLE;
 
+------------------------------------------------ Run all previous to get it work
 
 /*
 # 9\. Cursor
 
-https://learn.microsoft.com/en-us/sql/relational-databases/cursors?view=sql-server-ver16#type-of-cursors  
+https://learn.microsoft.com/en-us/sql/relational-databases/cursors?view=sql-server-ver16#type-of-cursors
 
-Cursors are used to retrieve data **row-by-row** from a result set and perform operations on each row. Generally speaking, set-based operations (which operate on all the rows in the result set at once) are faster and more efficient in SQL Server, so it's usually better to **avoid** using cursors whenever possible
+Cursors are used to retrieve data **row-by-row** 
+from a result set and perform operations on each row. 
+Generally speaking, set-based operations (which operate on all
+the rows in the result set at once) are faster and more efficient in SQL Server,
+so it's usually better to **avoid** using cursors whenever possible
 
 ## Use Cases
 
-1\. Perform complex **computations or transformations** on each row of a result set that cannot easily be expressed in a single SQL statement
+1\. Perform complex **computations or transformations** on each row of a result
+set that cannot easily be expressed in a single SQL statement
 
-2\. Process or handle one row at a time. This could be necessary for calling a **stored procedure** for each row
+2\. Process or handle one row at a time. 
+This could be necessary for calling a **stored procedure** for each row
 
-3\. Process rows in a specific order, and each row's processing may depend on the previous rows
+3\. Process rows in a specific order, and each row's processing 
+may depend on the previous rows
 
 ## Considerations
 
@@ -653,7 +741,7 @@ DECLARE @S_NAME VARCHAR(255), @NUM_OF_STUDENTS INT
 -- LOCAL: Solo visible para este batch de instrucciones y no para los eventos desencadenadores
 -- FAST_FORWARD: Solo se desplaza hacia adelante, de primera fila a ultima
 /*
-Declaramos un cursor que primero va a ser busqueda LOCAL y despu閟 FAST_FORWARD.
+Declaramos un cursor que primero va a ser busqueda LOCAL y despu锟絪 FAST_FORWARD.
 FOR definidos en que queremos iterar
 Con OPEN ponemos a funcionar el CURSOR
 */
@@ -665,8 +753,8 @@ OPEN ROW_CURSOR
 
 
 FETCH NEXT FROM ROW_CURSOR INTO @S_NAME, @NUM_OF_STUDENTS
--- Varibale global siempre, cuando no hay mas filas cambia a 1 
-WHILE @@FETCH_STATUS = 0 -- @@ variables din醡icas del sistema
+-- Varibale global siempre, cuando no hay mas filas cambia a 1
+WHILE @@FETCH_STATUS = 0 -- @@ variables din锟絤icas del sistema
 BEGIN
     PRINT CONCAT('The school name is: ',@S_NAME,'. It has ', @NUM_OF_STUDENTS, ' students')
     -- mover cursor a la siguiente fila
@@ -675,7 +763,7 @@ END
 
 --- Siempre cerrar el cursor y liberar la memoria usada
 CLOSE ROW_CURSOR
-DEALLOCATE ROW_CURSOR -- Desreferencia el cursos en disco para cerrar su coneixi髇 a disco.
+DEALLOCATE ROW_CURSOR -- Desreferencia el cursos en disco para cerrar su coneixi锟絥 a disco.
 
 
 /*
@@ -687,7 +775,7 @@ USE DB_JP_SQL_BASICO
 
 DECLARE @S_NAME VARCHAR(255), @NUM_OF_STUDENTS INT
 
-DECLARE ROW_CURSOR CURSOR LOCAL FAST_FORWARD FOR 
+DECLARE ROW_CURSOR CURSOR LOCAL FAST_FORWARD FOR
     (SELECT NAME, NUM_OF_STUDENTS FROM SCHOOL)
 
 OPEN ROW_CURSOR
