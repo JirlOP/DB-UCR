@@ -360,7 +360,7 @@ BEGIN -- Open a new code block (optional)
                 inserted AS NEW_TAKES -- "inserted" is the temp table that have the new values do update
             JOIN
                 [GROUP] AS G
-            ON
+            ON		
                 NEW_TAKES.ACRONYM = G.ACRONYM AND
                 NEW_TAKES.NUMBER = G.NUMBER AND
                 NEW_TAKES.SEMESTER = G.SEMESTER AND
@@ -390,6 +390,8 @@ INSERT INTO
     STUDENT
 VALUES
     ('jose@email.com','Jose','Ramirez','B65728',NULL),
+    ('petter@email.com','Petter','Ramirez','B65729',NULL)
+	('jose@email.com','Jose','Ramirez','B65728',NULL),
     ('petter@email.com','Petter','Ramirez','B65729',NULL)
 
 SELECT * FROM TAKES
