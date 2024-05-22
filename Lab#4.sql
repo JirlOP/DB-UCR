@@ -3,7 +3,7 @@ Jorge Ricardo Díaz Sagot - C12565
 Christopher Víquez Aguilar - C08538
 */
 
-USE C12565
+USE c08538
 
 /*
 Ejercicio 3
@@ -47,7 +47,7 @@ BEGIN  -- body of the function
 END
 
 -- Ver cuales estudiantes llevan cursos
-SELECT * FROM LLEVA
+SELECT * FROM
 
 -- Invocar para ver si funciona
 SELECT dbo.CreditosMatriculadosPorSemestre('991234567%', 2, 2024)
@@ -119,5 +119,13 @@ CREATE PROCEDURE ActualizarCreditos (
 )
 AS
 BEGIN
-
+	UPDATE Curso
+	Set Creditos = Creditos + ROUND((CONVERT(FLOAT,Creditos) * @PorcentajeAumentar)/100 ,0)
+	WHERE Nombre LIKE '%' + @NombreCursoPattern + '%'
 END
+
+SELECT * FROM CURSO
+
+EXEC ActualizarCreditos @NombreCursoPattern = 'Datos', @PorcentajeAumentar = 5
+
+SELECT * FROM CURSO
