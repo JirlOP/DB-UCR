@@ -1,0 +1,779 @@
+-- DB 1 Examen
+-- JORGE RICARDO DIAZ SAGOT C12565
+
+-- Create database
+CREATE DATABASE C12565_EXAMEN_1
+
+GO
+
+-- Use database
+USE C12565_EXAMEN_1
+
+GO
+-- Tables and create 2 tuples by each Table
+CREATE TABLE CONSOLA(
+    Nombre VARCHAR(50),
+    Compañia VARCHAR(50),
+    CONSTRAINT PK_CONSOLA PRIMARY KEY(Nombre, Compañia)
+)
+
+INSERT INTO CONSOLA VALUES('PlayStation 4', 'Sony')
+INSERT INTO CONSOLA VALUES('Xbox One', 'Microsoft')
+
+
+CREATE TABLE LOGRO(
+    Nombre VARCHAR(50),
+    Descripcion VARCHAR(50),
+    Imagen VARCHAR(50), -- This is only the name of the image not the byte array
+    CONSTRAINT PK_LOGRO PRIMARY KEY(Nombre)
+)
+
+INSERT INTO LOGRO VALUES('Logro 1', 'Descripcion 1', 'Imagen 1')
+INSERT INTO LOGRO VALUES('Logro 2', 'Descripcion 2', 'Imagen 2')
+
+
+CREATE TABLE JUEGO(
+    Nombre VARCHAR(50)
+    CONSTRAINT PK_JUEGO PRIMARY KEY(Nombre)
+)
+
+INSERT INTO JUEGO VALUES('Juego 1')
+INSERT INTO JUEGO VALUES('Juego 2')
+
+
+CREATE TABLE AREA(
+    NombreEdificio VARCHAR(50),
+    NombreJuego VARCHAR(50),
+    CONSTRAINT PK_AREA PRIMARY KEY(NombreEdificio, NombreJuego),
+    CONSTRAINT FK_AREA FOREIGN KEY(NombreJuego) REFERENCES JUEGO(Nombre)
+)
+
+INSERT INTO AREA VALUES('Edificio 1', 'Juego 1')
+INSERT INTO AREA VALUES('Edificio 2', 'Juego 2')
+
+
+CREATE TABLE EDIFICIO(
+    NombreEdificio VARCHAR(50),
+    NombreAreaEdificio VARCHAR(50),
+    NombreJuegoEdificio VARCHAR(50),
+    Imagen VARCHAR(50),
+    Interactivo BIT DEFAULT 0,
+    CONSTRAINT PK_EDIFICIO PRIMARY KEY(NombreEdificio, NombreAreaEdificio, NombreJuegoEdificio),
+    CONSTRAINT FK_EDIFICIO_AREA FOREIGN KEY(NombreAreaEdificio, NombreJuegoEdificio)
+		REFERENCES AREA(NombreEdificio, NombreJuego)
+)
+
+INSERT INTO EDIFICIO VALUES('Edificio 1', 'Edificio 1', 'Juego 1', 'Imagen 1', 1)
+INSERT INTO EDIFICIO VALUES('Edificio 2', 'Edificio 2', 'Juego 2', 'Imagen 2', 0)
+
+CREATE TABLE PERSONA(
+	Correo VARCHAR(80) CHECK(Correo LIKE '%@%.%'),
+	PrimerApellido VARCHAR(50) NOT NULL,
+	PrimerNombre VARCHAR(50) NOT NULL,
+    CONSTRAINT PK_PERSONA PRIMARY KEY(Correo)
+)
+
+INSERT INTO PERSONA VALUES('persona1@mail.mail', 'Apellido 1', 'Nombre 1')
+INSERT INTO PERSONA VALUES('persona2@mail.mail', 'Apellido 2', 'Nombre 2')
+
+CREATE TABLE CUENTA(
+    Username VARCHAR(50),
+    Contraseña CHAR(64), -- SHA256
+    CorreoPersona VARCHAR(80),
+    CONSTRAINT PK_CUENTA PRIMARY KEY(Username),
+    CONSTRAINT FK_CUENTA_PERSONA FOREIGN KEY(CorreoPersona) REFERENCES PERSONA(Correo)
+)
+
+INSERT INTO CUENTA VALUES('Username 1', 'B221D9DBB083A7F33428D7C2A3C3198AE925614D70210E28716CCAA7CD4DDB79', 'persona1@mail.mail')
+INSERT INTO CUENTA VALUES('Username 2', '1EF62013F28E97F69579402DFD1C1B01FA5A9344987EDF0BA14A8C717931A274', 'persona2@mail.mail')
+INSERT INTO CUENTA VALUES('Username 3', '3891F13300B85E89D403504B4C26ABE3ADF5F39420A2D111059423CB25B33B86', 'persona2@mail.mail')
+
+
+CREATE TABLE TIENE_BLOQUEADO(
+    UsernameCuenta VARCHAR(50),
+    UsernameBloqueado VARCHAR(50),
+    CONSTRAINT PK_TIENE_BLOQUEADO PRIMARY KEY(UsernameCuenta),
+    CONSTRAINT FK_TIENE_BLOQUEADO_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username),
+    CONSTRAINT FK_TIENE_BLOQUEADO_CUENTA_BLOQUEADO FOREIGN KEY(UsernameBloqueado) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO TIENE_BLOQUEADO VALUES('Username 1', 'Username 2')
+INSERT INTO TIENE_BLOQUEADO VALUES('Username 2', 'Username 1')
+
+
+CREATE TABLE TIENE_AMIGO(
+    UsernameCuenta VARCHAR(50),
+    UsernameAmigo VARCHAR(50),
+    CONSTRAINT PK_TIENE_AMIGO PRIMARY KEY(UsernameCuenta, UsernameAmigo),
+    CONSTRAINT FK_TIENE_AMIGO_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username),
+    CONSTRAINT FK_TIENE_AMIGO_CUENTA_AMIGO FOREIGN KEY(UsernameAmigo) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO TIENE_AMIGO VALUES('Username 3', 'Username 1')
+INSERT INTO TIENE_AMIGO VALUES('Username 1', 'Username 3')
+
+
+CREATE TABLE GANA(
+    NombreLogro VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    NombreConsola VARCHAR(50),
+    CompaniaConsola VARCHAR(50),
+    CONSTRAINT PK_GANA PRIMARY KEY(NombreLogro, UsernameCuenta, NombreConsola, CompaniaConsola),
+    CONSTRAINT FK_GANA_LOGRO FOREIGN KEY(NombreLogro) REFERENCES LOGRO(Nombre),
+    CONSTRAINT FK_GANA_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username),
+    CONSTRAINT FK_GANA_CONSOLA FOREIGN KEY(NombreConsola, CompaniaConsola)
+		REFERENCES CONSOLA(Nombre, Compañia)
+)
+
+INSERT INTO GANA VALUES('Logro 1', 'Username 1', 'PlayStation 4', 'Sony')
+INSERT INTO GANA VALUES('Logro 2', 'Username 2', 'Xbox One', 'Microsoft')
+
+
+CREATE TABLE JUEGA(
+    UsernameCuenta VARCHAR(50),
+    NombreConsola VARCHAR(50),
+    CompaniaConsola VARCHAR(50),
+    NombreJuego VARCHAR(50),
+    CONSTRAINT PK_JUEGA PRIMARY KEY(UsernameCuenta, NombreConsola, CompaniaConsola, NombreJuego),
+    CONSTRAINT FK_JUEGA_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username),
+    CONSTRAINT FK_JUEGA_CONSOLA FOREIGN KEY(NombreConsola, CompaniaConsola)
+		REFERENCES CONSOLA(Nombre, Compañia),
+    CONSTRAINT FK_JUEGA_JUEGO FOREIGN KEY(NombreJuego) REFERENCES JUEGO(Nombre)
+)
+
+INSERT INTO JUEGA VALUES('Username 1', 'PlayStation 4', 'Sony', 'Juego 1')
+INSERT INTO JUEGA VALUES('Username 2', 'Xbox One', 'Microsoft', 'Juego 2')
+
+
+CREATE TABLE PERSONAJE(
+    Nombre VARCHAR(50),
+    Ataque FLOAT DEFAULT 0,
+    Defensa FLOAT DEFAULT 0,
+    UsernameCuenta VARCHAR(50),
+    CONSTRAINT PK_PERSONAJE PRIMARY KEY(Nombre),
+    CONSTRAINT FK_PERSONAJE_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO PERSONAJE VALUES('Personaje 1', 0, 0, 'Username 1')
+INSERT INTO PERSONAJE VALUES('Personaje 2', 0, 0, 'Username 2')
+
+
+CREATE TABLE COLLAR(
+    Nombre VARCHAR(50),
+    Lugar VARCHAR(50),
+    Color CHAR(6),
+    Textura VARCHAR(50), -- Name of the texture
+    CantidadAtaque FLOAT,
+    CantidadDefensa FLOAT,
+    CONSTRAINT PK_COLLAR PRIMARY KEY(Nombre, Lugar)
+)
+
+INSERT INTO COLLAR VALUES('Collar 1', 'Lugar 1', 'Color1', 'Textura 1', 3, 2)
+INSERT INTO COLLAR VALUES('Collar 2', 'Lugar 2', 'Color2', 'Textura 2', 4, 6)
+
+
+CREATE TABLE CASCO(
+    Nombre VARCHAR(50),
+    Lugar VARCHAR(50),
+    Color CHAR(6),
+    Textura VARCHAR(50),
+    CantidadAtaque FLOAT,
+    CantidadDefensa FLOAT,
+    CONSTRAINT PK_CASCO PRIMARY KEY(Nombre, Lugar)
+)
+
+INSERT INTO CASCO VALUES('Power Ranger', 'Lugar 1', 'ROJO', 'Textura 1', 1, 7)
+INSERT INTO CASCO VALUES('Casco 2', 'Lugar 2', 'Color2', 'Textura 2', 4, 9)
+INSERT INTO CASCO VALUES('Casco 3', 'Lugar 3', 'Color3', 'Textura 3', 1, 1)
+
+
+
+CREATE TABLE CARA(
+    Nombre VARCHAR(50),
+    Lugar VARCHAR(50),
+    Color CHAR(6),
+    Textura VARCHAR(50),
+    CantidadAtaque FLOAT,
+    CantidadDefensa FLOAT,
+    CONSTRAINT PK_CARA PRIMARY KEY(Nombre, Lugar)
+)
+
+INSERT INTO CARA VALUES('Cara 1', 'Lugar 1', 'Color1', 'Textura 1', 3, 3)
+INSERT INTO CARA VALUES('Cara 2', 'Lugar 2', 'Color2', 'Textura 2', 2, 2)
+
+
+CREATE TABLE TORSO(
+    Nombre VARCHAR(50),
+    Lugar VARCHAR(50),
+    Color CHAR(6),
+    Textura VARCHAR(50),
+    CantidadAtaque FLOAT,
+    CantidadDefensa FLOAT,
+    CONSTRAINT PK_TORSO PRIMARY KEY(Nombre, Lugar)
+)
+
+INSERT INTO TORSO VALUES('Torso 1', 'Lugar 1', 'Color1', 'Textura 1', 4, 10)
+INSERT INTO TORSO VALUES('Torso 2', 'Lugar 2', 'Color2', 'Textura 2', 2, 16)
+
+CREATE TABLE MANOS(
+    Nombre VARCHAR(50),
+    Lugar VARCHAR(50),
+    Color CHAR(6),
+    Textura VARCHAR(50),
+    CantidadAtaque FLOAT,
+    CantidadDefensa FLOAT,
+    CONSTRAINT PK_MANOS PRIMARY KEY(Nombre, Lugar)
+)
+
+INSERT INTO MANOS VALUES('Manos 1', 'Lugar 1', 'Color1', 'Textura 1', 1, 2)
+INSERT INTO MANOS VALUES('Manos 2', 'Lugar 2', 'Color2', 'Textura 2', 2, 2)
+
+
+CREATE TABLE PANTALONES(
+    Nombre VARCHAR(50),
+    Lugar VARCHAR(50),
+    Color CHAR(6),
+    Textura VARCHAR(50),
+    CantidadAtaque FLOAT,
+    CantidadDefensa FLOAT,
+    CONSTRAINT PK_PANTALONES PRIMARY KEY(Nombre, Lugar)
+)
+
+INSERT INTO PANTALONES VALUES('Pantalones 1', 'Lugar 1', 'Color1', 'Textura 1', 4, 10)
+INSERT INTO PANTALONES VALUES('Pantalones 2', 'Lugar 2', 'Color2', 'Textura 2', 3, 12)
+
+
+CREATE TABLE ZAPATOS(
+    Nombre VARCHAR(50),
+    Lugar VARCHAR(50),
+    Color CHAR(6),
+    Textura VARCHAR(50),
+    CantidadAtaque FLOAT,
+    CantidadDefensa FLOAT,
+    CONSTRAINT PK_ZAPATOS PRIMARY KEY(Nombre, Lugar)
+)
+
+INSERT INTO ZAPATOS VALUES('Zapatos 1', 'Lugar 1', 'Color1', 'Textura 1', 2, 2)
+INSERT INTO ZAPATOS VALUES('Zapatos 2', 'Lugar 2', 'Color2', 'Textura 2', 1, 1)
+
+
+CREATE TABLE ARMA(
+    Nombre VARCHAR(50),
+    Lugar VARCHAR(50),
+    Color CHAR(6),
+    Textura VARCHAR(50),
+    CantidadAtaque FLOAT,
+    CantidadDefensa FLOAT,
+    CONSTRAINT PK_ARMA PRIMARY KEY(Nombre, Lugar)
+)
+
+INSERT INTO ARMA VALUES('Arma 1', 'Lugar 1', 'Color1', 'Textura 1', 10, 0)
+INSERT INTO ARMA VALUES('Arma 2', 'Lugar 2', 'Color2', 'Textura 2', 20, 0)
+
+
+CREATE TABLE INVENTARIAR_COLLAR(
+    NombrePersonaje VARCHAR(50),
+    NECollar VARCHAR(50),
+    LECollar VARCHAR(50),
+    Equipado BIT DEFAULT 0, -- if the item is equipped or not both case are in the
+    CONSTRAINT PK_INVENTARIAR_COLLAR PRIMARY KEY(NombrePersonaje, NECollar, LECollar),
+    CONSTRAINT FK_INVENTARIAR_COLLAR_PERSONAJE FOREIGN KEY(NombrePersonaje)
+		REFERENCES PERSONAJE(Nombre),
+    CONSTRAINT FK_INVENTARIAR_COLLAR_COLLAR_N FOREIGN KEY(NECollar, LECollar)
+		REFERENCES COLLAR(Nombre, Lugar)
+)
+
+-- Restrict only one Equipado = 1 for each NombrePersonaje
+CREATE UNIQUE INDEX IX_UNIQUE_COLLAR_EQUIPADO
+ON INVENTARIAR_COLLAR (NombrePersonaje)
+WHERE Equipado = 1;
+
+INSERT INTO INVENTARIAR_COLLAR VALUES('Personaje 1', 'Collar 1', 'Lugar 1', 0)
+INSERT INTO INVENTARIAR_COLLAR VALUES('Personaje 1', 'Collar 2', 'Lugar 2', 0)
+
+
+CREATE TABLE INVENTARIAR_CASCO(
+    NombrePersonaje VARCHAR(50),
+    NECasco VARCHAR(50),
+    LECasco VARCHAR(50),
+    Equipado BIT DEFAULT 0,
+    CONSTRAINT PK_INVENTARIAR_CASCO PRIMARY KEY(NombrePersonaje, NECasco, LECasco),
+    CONSTRAINT FK_INVENTARIAR_CASCO_PERSONAJE FOREIGN KEY(NombrePersonaje)
+		REFERENCES PERSONAJE(Nombre),
+    CONSTRAINT FK_INVENTARIAR_CASCO_CASCO_N FOREIGN KEY(NECasco, LECasco)
+        REFERENCES CASCO(Nombre, Lugar)
+)
+
+CREATE UNIQUE INDEX IX_UNIQUE_CASCO_EQUIPADO
+ON INVENTARIAR_CASCO (NombrePersonaje)
+WHERE Equipado = 1;
+
+INSERT INTO INVENTARIAR_CASCO VALUES('Personaje 1', 'Power Ranger', 'Lugar 1', 1)
+INSERT INTO INVENTARIAR_CASCO VALUES('Personaje 1', 'Casco 2', 'Lugar 2', 0)
+
+
+CREATE TABLE INVENTARIAR_CARA(
+    NombrePersonaje VARCHAR(50),
+    NECara VARCHAR(50),
+    LECara VARCHAR(50),
+    Equipado BIT DEFAULT 0,
+    CONSTRAINT PK_INVENTARIAR_CARA PRIMARY KEY(NombrePersonaje, NECara, LECara),
+    CONSTRAINT FK_INVENTARIAR_CARA_PERSONAJE FOREIGN KEY(NombrePersonaje)
+		REFERENCES PERSONAJE(Nombre),
+    CONSTRAINT FK_INVENTARIAR_CARA_CARA FOREIGN KEY(NECara, LECara)
+        REFERENCES CARA(Nombre, Lugar)
+)
+
+CREATE UNIQUE INDEX IX_UNIQUE_CARA_EQUIPADO
+ON INVENTARIAR_CARA (NombrePersonaje)
+WHERE Equipado = 1;
+
+INSERT INTO INVENTARIAR_CARA VALUES('Personaje 1', 'Cara 1', 'Lugar 1', 0)
+INSERT INTO INVENTARIAR_CARA VALUES('Personaje 1', 'Cara 2', 'Lugar 2', 0)
+
+
+CREATE TABLE INVENTARIAR_TORSO(
+    NombrePersonaje VARCHAR(50),
+    NETorso VARCHAR(50),
+    LETorso VARCHAR(50),
+    Equipado BIT DEFAULT 0,
+    CONSTRAINT PK_INVENTARIAR_TORSO PRIMARY KEY(NombrePersonaje, NETorso, LETorso),
+    CONSTRAINT FK_INVENTARIAR_TORSO_PERSONAJE FOREIGN KEY(NombrePersonaje) REFERENCES PERSONAJE(Nombre),
+    CONSTRAINT FK_INVENTARIAR_TORSO_TORSO FOREIGN KEY(NETorso, LETorso)
+        REFERENCES TORSO(Nombre, Lugar)
+)
+
+CREATE UNIQUE INDEX IX_UNIQUE_TORSO_EQUIPADO
+ON INVENTARIAR_TORSO (NombrePersonaje)
+WHERE Equipado = 1;
+
+INSERT INTO INVENTARIAR_TORSO VALUES('Personaje 1', 'Torso 1', 'Lugar 1', 1)
+INSERT INTO INVENTARIAR_TORSO VALUES('Personaje 2', 'Torso 2', 'Lugar 2', 0)
+
+
+CREATE TABLE INVENTARIAR_MANOS(
+    NombrePersonaje VARCHAR(50),
+    NEManos VARCHAR(50),
+    LEManos VARCHAR(50),
+    Equipado BIT DEFAULT 0,
+    CONSTRAINT PK_INVENTARIAR_MANOS PRIMARY KEY(NombrePersonaje, NEManos, LEManos),
+    CONSTRAINT FK_INVENTARIAR_MANOS_PERSONAJE FOREIGN KEY(NombrePersonaje) REFERENCES PERSONAJE(Nombre),
+    CONSTRAINT FK_INVENTARIAR_MANOS_MANOS FOREIGN KEY(NEManos, LEManos)
+        REFERENCES MANOS(Nombre, Lugar)
+)
+
+CREATE UNIQUE INDEX IX_UNIQUE_MANOS_EQUIPADO
+ON INVENTARIAR_MANOS (NombrePersonaje)
+WHERE Equipado = 1;
+
+INSERT INTO INVENTARIAR_MANOS VALUES('Personaje 1', 'Manos 1', 'Lugar 1', 0)
+INSERT INTO INVENTARIAR_MANOS VALUES('Personaje 1', 'Manos 2', 'Lugar 2', 0)
+
+
+CREATE TABLE INVENTARIAR_PANTALONES(
+    NombrePersonaje VARCHAR(50),
+    NEPantalones VARCHAR(50),
+    LEPantalones VARCHAR(50),
+    Equipado BIT DEFAULT 0,
+    CONSTRAINT PK_INVENTARIAR_PANTALONES PRIMARY KEY(NombrePersonaje, NEPantalones, LEPantalones),
+    CONSTRAINT FK_INVENTARIAR_PANTALONES_PERSONAJE FOREIGN KEY(NombrePersonaje) REFERENCES PERSONAJE(Nombre),
+    CONSTRAINT FK_INVENTARIAR_PANTALONES_PANTALONES FOREIGN KEY(NEPantalones, LEPantalones)
+        REFERENCES PANTALONES(Nombre, Lugar)
+)
+
+CREATE UNIQUE INDEX IX_UNIQUE_PANTALONES_EQUIPADO
+ON INVENTARIAR_PANTALONES (NombrePersonaje)
+WHERE Equipado = 1;
+
+INSERT INTO INVENTARIAR_PANTALONES VALUES('Personaje 1', 'Pantalones 1', 'Lugar 1', 0)
+INSERT INTO INVENTARIAR_PANTALONES VALUES('Personaje 1', 'Pantalones 2', 'Lugar 2', 0)
+
+
+CREATE TABLE INVENTARIAR_ZAPATOS(
+    NombrePersonaje VARCHAR(50),
+    NEZapatos VARCHAR(50),
+    LEZapatos VARCHAR(50),
+    Equipado BIT DEFAULT 0,
+    CONSTRAINT PK_INVENTARIAR_ZAPATOS PRIMARY KEY(NombrePersonaje, NEZapatos, LEZapatos),
+    CONSTRAINT FK_INVENTARIAR_ZAPATOS_PERSONAJE FOREIGN KEY(NombrePersonaje) REFERENCES PERSONAJE(Nombre),
+    CONSTRAINT FK_INVENTARIAR_ZAPATOS_ZAPATOS FOREIGN KEY(NEZapatos, LEZapatos)
+        REFERENCES ZAPATOS(Nombre, Lugar)
+)
+
+CREATE UNIQUE INDEX IX_UNIQUE_ZAPATOS_EQUIPADO
+ON INVENTARIAR_ZAPATOS (NombrePersonaje)
+WHERE Equipado = 1;
+
+INSERT INTO INVENTARIAR_ZAPATOS VALUES('Personaje 1', 'Zapatos 1', 'Lugar 1', 0)
+INSERT INTO INVENTARIAR_ZAPATOS VALUES('Personaje 1', 'Zapatos 2', 'Lugar 2', 0)
+
+CREATE TABLE INVENTARIAR_ARMA(
+    NombrePersonaje VARCHAR(50),
+    NEArma VARCHAR(50),
+    LEArma VARCHAR(50),
+    Equipado BIT DEFAULT 0,
+    CONSTRAINT PK_INVENTARIAR_ARMA PRIMARY KEY(NombrePersonaje, NEArma, LEArma),
+    CONSTRAINT FK_INVENTARIAR_ARMA_PERSONAJE FOREIGN KEY(NombrePersonaje) REFERENCES PERSONAJE(Nombre),
+    CONSTRAINT FK_INVENTARIAR_ARMA_ARMA FOREIGN KEY(NEArma, LEArma)
+        REFERENCES ARMA(Nombre, Lugar)
+)
+
+CREATE UNIQUE INDEX IX_UNIQUE_ARMA_EQUIPADO
+ON INVENTARIAR_ARMA (NombrePersonaje)
+WHERE Equipado = 1;
+
+INSERT INTO INVENTARIAR_ARMA VALUES('Personaje 1', 'Arma 1', 'Lugar 1', 0)
+INSERT INTO INVENTARIAR_ARMA VALUES('Personaje 1', 'Arma 2', 'Lugar 2', 0)
+
+
+CREATE TABLE VENDE_COLLAR(
+    NombreCollar VARCHAR(50),
+    LugarCollar VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT, -- This is the id of the transaction. For aese it will be int.
+    Estado BIT NOT NULL, -- bool if the transaction is active or not
+    CONSTRAINT PK_VENDE_COLLAR PRIMARY KEY(NombreCollar, LugarCollar, UsernameCuenta, Id),
+    CONSTRAINT FK_VENDE_COLLAR_COLLAR FOREIGN KEY(NombreCollar, LugarCollar)
+        REFERENCES COLLAR(Nombre, Lugar),
+    CONSTRAINT FK_VENDE_COLLAR_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO VENDE_COLLAR VALUES('Collar 1', 'Lugar 1', 'Username 1', 10, 1, 1)
+INSERT INTO VENDE_COLLAR VALUES('Collar 2', 'Lugar 2', 'Username 2', 20, 2, 1)
+
+
+CREATE TABLE COMPRA_COLLAR(
+    NombreCollar VARCHAR(50),
+    LugarCollar VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    CONSTRAINT PK_COMPRA_COLLAR PRIMARY KEY(NombreCollar, LugarCollar, UsernameCuenta, Id),
+    CONSTRAINT FK_COMPRA_COLLAR_COLLAR FOREIGN KEY(NombreCollar, LugarCollar)
+        REFERENCES COLLAR(Nombre, Lugar),
+    CONSTRAINT FK_COMPRA_COLLAR_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO COMPRA_COLLAR VALUES('Collar 1', 'Lugar 1', 'Username 1', 10, 1)
+INSERT INTO COMPRA_COLLAR VALUES('Collar 2', 'Lugar 2', 'Username 2', 20, 2)
+
+
+
+CREATE TABLE VENDE_CASCO(
+    NombreCasco VARCHAR(50),
+    LugarCasco VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    Estado BIT NOT NULL,
+    CONSTRAINT PK_VENDE_CASCO PRIMARY KEY(NombreCasco, LugarCasco, UsernameCuenta, Id),
+    CONSTRAINT FK_VENDE_CASCO_CASCO FOREIGN KEY(NombreCasco, LugarCasco)
+        REFERENCES CASCO(Nombre, Lugar),
+    CONSTRAINT FK_VENDE_CASCO_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO VENDE_CASCO VALUES('Casco 3', 'Lugar 3', 'Username 1', 10, 1, 1)
+INSERT INTO VENDE_CASCO VALUES('Casco 2', 'Lugar 2', 'Username 2', 20, 2, 1)
+
+
+CREATE TABLE COMPRA_CASCO(
+    NombreCasco VARCHAR(50),
+    LugarCasco VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    CONSTRAINT PK_COMPRA_CASCO PRIMARY KEY(NombreCasco, LugarCasco, UsernameCuenta, Id),
+    CONSTRAINT FK_COMPRA_CASCO_CASCO FOREIGN KEY(NombreCasco, LugarCasco)
+        REFERENCES CASCO(Nombre, Lugar),
+    CONSTRAINT FK_COMPRA_CASCO_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO COMPRA_CASCO VALUES('Casco 3', 'Lugar 3', 'Username 1', 10, 1)
+INSERT INTO COMPRA_CASCO VALUES('Casco 2', 'Lugar 2', 'Username 2', 20, 2)
+
+
+CREATE TABLE VENDE_CARA(
+    NombreCara VARCHAR(50),
+    LugarCara VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    Estado BIT NOT NULL,
+    CONSTRAINT PK_VENDE_CARA PRIMARY KEY(NombreCara, LugarCara, UsernameCuenta, Id),
+    CONSTRAINT FK_VENDE_CARA_CARA FOREIGN KEY(NombreCara, LugarCara)
+        REFERENCES CARA(Nombre, Lugar),
+    CONSTRAINT FK_VENDE_CARA_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO VENDE_CARA VALUES('Cara 1', 'Lugar 1', 'Username 1', 10, 1, 1)
+INSERT INTO VENDE_CARA VALUES('Cara 2', 'Lugar 2', 'Username 2', 20, 2, 1)
+
+
+CREATE TABLE COMPRA_CARA(
+    NombreCara VARCHAR(50),
+    LugarCara VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    CONSTRAINT PK_COMPRA_CARA PRIMARY KEY(NombreCara, LugarCara, UsernameCuenta, Id),
+    CONSTRAINT FK_COMPRA_CARA_CARA FOREIGN KEY(NombreCara, LugarCara)
+        REFERENCES CARA(Nombre, Lugar),
+    CONSTRAINT FK_COMPRA_CARA_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO COMPRA_CARA VALUES('Cara 1', 'Lugar 1', 'Username 1', 10, 1)
+INSERT INTO COMPRA_CARA VALUES('Cara 2', 'Lugar 2', 'Username 2', 20, 2)
+
+
+CREATE TABLE VENDE_TORSO(
+    NombreTorso VARCHAR(50),
+    LugarTorso VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    Estado BIT NOT NULL,
+    CONSTRAINT PK_VENDE_TORSO PRIMARY KEY(NombreTorso, LugarTorso, UsernameCuenta, Id),
+    CONSTRAINT FK_VENDE_TORSO_TORSO FOREIGN KEY(NombreTorso, LugarTorso)
+        REFERENCES TORSO(Nombre, Lugar),
+    CONSTRAINT FK_VENDE_TORSO_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO VENDE_TORSO VALUES('Torso 1', 'Lugar 1', 'Username 1', 10, 1, 1)
+INSERT INTO VENDE_TORSO VALUES('Torso 2', 'Lugar 2', 'Username 2', 20, 2, 1)
+
+
+CREATE TABLE COMPRA_TORSO(
+    NombreTorso VARCHAR(50),
+    LugarTorso VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    CONSTRAINT PK_COMPRA_TORSO PRIMARY KEY(NombreTorso, LugarTorso, UsernameCuenta, Id),
+    CONSTRAINT FK_COMPRA_TORSO_TORSO FOREIGN KEY(NombreTorso, LugarTorso)
+        REFERENCES TORSO(Nombre, Lugar),
+    CONSTRAINT FK_COMPRA_TORSO_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO COMPRA_TORSO VALUES('Torso 1', 'Lugar 1', 'Username 1', 10, 1)
+INSERT INTO COMPRA_TORSO VALUES('Torso 2', 'Lugar 2', 'Username 2', 20, 2)
+
+
+CREATE TABLE VENDE_MANOS(
+    NombreManos VARCHAR(50),
+    LugarManos VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    Estado BIT NOT NULL,
+    CONSTRAINT PK_VENDE_MANOS PRIMARY KEY(NombreManos, LugarManos, UsernameCuenta, Id),
+    CONSTRAINT FK_VENDE_MANOS_MANOS FOREIGN KEY(NombreManos, LugarManos)
+        REFERENCES MANOS(Nombre, Lugar),
+    CONSTRAINT FK_VENDE_MANOS_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO VENDE_MANOS VALUES('Manos 1', 'Lugar 1', 'Username 1', 10, 1, 1)
+INSERT INTO VENDE_MANOS VALUES('Manos 2', 'Lugar 2', 'Username 2', 10, 1, 1)
+
+
+
+CREATE TABLE COMPRA_MANOS(
+    NombreManos VARCHAR(50),
+    LugarManos VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    CONSTRAINT PK_COMPRA_MANOS PRIMARY KEY(NombreManos, LugarManos, UsernameCuenta, Id),
+    CONSTRAINT FK_COMPRA_MANOS_MANOS FOREIGN KEY(NombreManos, LugarManos)
+        REFERENCES MANOS(Nombre, Lugar),
+    CONSTRAINT FK_COMPRA_MANOS_CUENTA FOREIGN KEY (UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO COMPRA_MANOS VALUES('Manos 1', 'Lugar 1', 'Username 1', 10, 1)
+INSERT INTO COMPRA_MANOS VALUES('Manos 2', 'Lugar 2', 'Username 2', 10, 1)
+
+
+
+CREATE TABLE VENDE_PANTALONES(
+    NombrePantalones VARCHAR(50),
+    LugarPantalones VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    Estado BIT NOT NULL,
+    CONSTRAINT PK_VENDE_PANTALONES PRIMARY KEY(NombrePantalones, LugarPantalones, UsernameCuenta, Id),
+    CONSTRAINT FK_VENDE_PANTALONES_PANTALONES FOREIGN KEY(NombrePantalones, LugarPantalones)
+        REFERENCES PANTALONES(Nombre, Lugar),
+    CONSTRAINT FK_VENDE_PANTALONES_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO VENDE_PANTALONES VALUES('Pantalones 1', 'Lugar 1', 'Username 1', 10, 1, 1)
+INSERT INTO VENDE_PANTALONES VALUES('Pantalones 2', 'Lugar 2', 'Username 2', 10, 1, 1)
+
+
+
+CREATE TABLE COMPRA_PANTALONES(
+    NombrePantalones VARCHAR(50),
+    LugarPantalones VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    CONSTRAINT PK_COMPRA_PANTALONES PRIMARY KEY(NombrePantalones, LugarPantalones, UsernameCuenta, Id),
+    CONSTRAINT FK_COMPRA_PANTALONES_PANTALONES FOREIGN KEY(NombrePantalones, LugarPantalones)
+        REFERENCES PANTALONES(Nombre, Lugar),
+    CONSTRAINT FK_COMPRA_PANTALONES_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO COMPRA_PANTALONES VALUES('Pantalones 1', 'Lugar 1', 'Username 1', 10, 1)
+INSERT INTO COMPRA_PANTALONES VALUES('Pantalones 2', 'Lugar 2', 'Username 2', 10, 1)
+
+
+
+CREATE TABLE VENDE_ZAPATOS(
+    NombreZapatos VARCHAR(50),
+    LugarZapatos VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    Estado BIT NOT NULL,
+    CONSTRAINT PK_VENDE_ZAPATOS PRIMARY KEY(NombreZapatos, LugarZapatos, UsernameCuenta, Id),
+    CONSTRAINT FK_VENDE_ZAPATOS_ZAPATOS FOREIGN KEY(NombreZapatos, LugarZapatos)
+        REFERENCES ZAPATOS(Nombre, Lugar),
+    CONSTRAINT FK_VENDE_ZAPATOS_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO VENDE_ZAPATOS VALUES('Zapatos 1', 'Lugar 1', 'Username 1', 10, 1, 1)
+INSERT INTO VENDE_ZAPATOS VALUES('Zapatos 2', 'Lugar 2', 'Username 2', 10, 1, 1)
+
+
+CREATE TABLE COMPRA_ZAPATOS(
+    NombreZapatos VARCHAR(50),
+    LugarZapatos VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    CONSTRAINT PK_COMPRA_ZAPATOS PRIMARY KEY(NombreZapatos, LugarZapatos, UsernameCuenta, Id),
+    CONSTRAINT FK_COMPRA_ZAPATOS_ZAPATOS FOREIGN KEY(NombreZapatos, LugarZapatos)
+        REFERENCES ZAPATOS(Nombre, Lugar),
+    CONSTRAINT FK_COMPRA_ZAPATOS_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO COMPRA_ZAPATOS VALUES('Zapatos 1', 'Lugar 1', 'Username 1', 10, 1)
+INSERT INTO COMPRA_ZAPATOS VALUES('Zapatos 2', 'Lugar 2', 'Username 2', 10, 1)
+
+
+CREATE TABLE VENDE_ARMA(
+    NombreArma VARCHAR(50),
+    LugarArma VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    Estado BIT NOT NULL,
+    CONSTRAINT PK_VENDE_ARMA PRIMARY KEY(NombreArma, LugarArma, UsernameCuenta, Id),
+    CONSTRAINT FK_VENDE_ARMA_ARMA FOREIGN KEY(NombreArma, LugarArma)
+        REFERENCES ARMA(Nombre, Lugar),
+    CONSTRAINT FK_VENDE_ARMA_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO VENDE_ARMA VALUES('Arma 1', 'Lugar 1', 'Username 1', 10, 1, 1)
+INSERT INTO VENDE_ARMA VALUES('Arma 2', 'Lugar 2', 'Username 2', 10, 1, 1)
+
+
+CREATE TABLE COMPRA_ARMA(
+    NombreArma VARCHAR(50),
+    LugarArma VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    CONSTRAINT PK_COMPRA_ARMA PRIMARY KEY(NombreArma, LugarArma, UsernameCuenta, Id),
+    CONSTRAINT FK_COMPRA_ARMA_ARMA FOREIGN KEY(NombreArma, LugarArma)
+        REFERENCES ARMA(Nombre, Lugar),
+    CONSTRAINT FK_COMPRA_ARMA_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO COMPRA_ARMA VALUES('Arma 1', 'Lugar 1', 'Username 1', 10, 1)
+INSERT INTO COMPRA_ARMA VALUES('Arma 2', 'Lugar 2', 'Username 2', 10, 1)
+
+
+
+CREATE TABLE MATERIAL(
+    Nombre VARCHAR(50),
+	Textura VARCHAR(50),
+    Descripcion VARCHAR(50),
+    CONSTRAINT PK_MATERIAL PRIMARY KEY(Nombre)
+)
+
+INSERT INTO MATERIAL VALUES('Oro', 'Textura 1', 'Descripcion 1')
+INSERT INTO MATERIAL VALUES('Material 2', 'Textura 2', 'Descripcion 2')
+INSERT INTO MATERIAL VALUES('Material 3', 'Textura 3', 'Descripcion 3')
+
+
+
+CREATE TABLE RECETA(
+    Nombre VARCHAR(50),
+    Descripcion VARCHAR(50),
+    CONSTRAINT PK_RECETA PRIMARY KEY(Nombre)
+)
+
+INSERT INTO RECETA VALUES('Receta 1', 'Descripcion 1')
+INSERT INTO RECETA VALUES('Receta 2', 'Descripcion 2')
+INSERT INTO RECETA VALUES('Receta 3', 'Descripcion 3')
+
+
+CREATE TABLE UTILIZA(
+    NombreReceta VARCHAR(50),
+    NombreMaterial VARCHAR(50),
+    Cantidad INT NOT NULL,
+    CONSTRAINT PK_UTILIZA PRIMARY KEY(NombreReceta, NombreMaterial),
+    CONSTRAINT FK_UTILIZA_RECETA FOREIGN KEY(NombreReceta) REFERENCES RECETA(Nombre),
+    CONSTRAINT FK_UTILIZA_MATERIAL FOREIGN KEY(NombreMaterial) REFERENCES MATERIAL(Nombre)
+)
+
+INSERT INTO UTILIZA VALUES('Receta 1', 'Oro', 10)
+INSERT INTO UTILIZA VALUES('Receta 2', 'Material 2', 20)
+INSERT INTO UTILIZA VALUES('Receta 3', 'Material 3', 30)
+
+
+CREATE TABLE INVENTARIAR_MATERIAL(
+    NombrePersonaje VARCHAR(50),
+    NombreMaterial VARCHAR(50),
+    Cantidad INT NOT NULL,
+    CONSTRAINT PK_INVENTARIAR_MATERIAL PRIMARY KEY(NombrePersonaje, NombreMaterial),
+    CONSTRAINT FK_INVENTARIAR_MATERIAL_PERSONAJE FOREIGN KEY(NombrePersonaje) REFERENCES PERSONAJE(Nombre),
+    CONSTRAINT FK_INVENTARIAR_MATERIAL_MATERIAL FOREIGN KEY(NombreMaterial) REFERENCES MATERIAL(Nombre)
+)
+
+INSERT INTO INVENTARIAR_MATERIAL VALUES('Personaje 1', 'Oro', 10)
+INSERT INTO INVENTARIAR_MATERIAL VALUES('Personaje 1', 'Material 2', 20)
+
+
+CREATE TABLE VENDE_MATERIAL(
+    NombreMaterial VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+	Estado BIT  NOT NULL,
+    Id INT,
+    CONSTRAINT PK_VENDE_MATERIAL PRIMARY KEY(NombreMaterial, UsernameCuenta, Id),
+    CONSTRAINT FK_VENDE_MATERIAL_MATERIAL FOREIGN KEY(NombreMaterial) REFERENCES MATERIAL(Nombre),
+    CONSTRAINT FK_VENDE_MATERIAL_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO VENDE_MATERIAL VALUES('Material 2', 'Username 2', 20, 1, 1)
+INSERT INTO VENDE_MATERIAL VALUES('Material 3', 'Username 1', 30, 1, 2)
+
+
+CREATE TABLE COMPRA_MATERIAL(
+    NombreMaterial VARCHAR(50),
+    UsernameCuenta VARCHAR(50),
+    Costo FLOAT NOT NULL,
+    Id INT,
+    CONSTRAINT PK_COMPRA_MATERIAL PRIMARY KEY(NombreMaterial, UsernameCuenta, Id),
+    CONSTRAINT FK_COMPRA_MATERIAL_MATERIAL FOREIGN KEY(NombreMaterial) REFERENCES MATERIAL(Nombre),
+    CONSTRAINT FK_COMPRA_MATERIAL_CUENTA FOREIGN KEY(UsernameCuenta) REFERENCES CUENTA(Username)
+)
+
+INSERT INTO COMPRA_MATERIAL VALUES('Material 2', 'Username 2', 20, 1)
+INSERT INTO COMPRA_MATERIAL VALUES('Material 3', 'Username 1', 30, 2)
+
+GO
+
