@@ -96,3 +96,59 @@ WHERE Codigo LIKE 'Bach01Comp'
 
 SELECT * FROM CARRERA
 SELECT * FROM EMPADRONADO_EN
+
+
+-- 4
+CREATE OR ALTER TRIGGER 
+	PersonaEstudianteNOTProfesor
+ON
+	ESTUDIANTE
+AFTER INSERT
+AS
+BEGIN
+IF EXISTS(
+	SELECT * 
+	FROM PROFESOR 
+	WHERE Cedula = (SELECT Cedula FROM inserted)
+)
+RAISERROR ('La persona ya es profesor, no puede ser estudiante', 16, 1);
+ROLLBACK TRANSACTION
+END
+
+CREATE OR ALTER TRIGGER 
+	PersonaProfesorNOTEstudiante
+ON
+	PROFESOR
+AFTER INSERT
+AS
+BEGIN
+IF EXISTS(
+	SELECT * 
+	FROM ESTUDIANTE 
+	WHERE Cedula = (SELECT Cedula FROM inserted)
+)
+RAISERROR ('La persona ya es estudiante, no puede ser profesor', 16, 1);
+ROLLBACK TRANSACTION
+END
+
+-- Prueba insertando estudiante que ya es profesor
+SELECT * FROM ESTUDIANTE
+SELECT * FROM PROFESOR
+
+INSERT INTO
+	ESTUDIANTE (Cedula,Email,NombreP,Apellido1,Apellido2,Sexo,FechaNac,Direccion,Telefono,Carne,Estado)
+VALUES
+	('12311231','alan.calderon@ecci.ucr.ac.cr','Alan','Calderon','Castro','m','1972-02-07','Alajuela','260933','B55987','A')
+
+SELECT * FROM ESTUDIANTE
+
+-- Prueba insertando profesor que ya es estudiante
+SELECT * FROM ESTUDIANTE
+SELECT * FROM PROFESOR
+
+INSERT INTO
+	PROFESOR (Cedula,Email,NombreP,Apellido1,Apellido2,Sexo,FechaNac,Direccion,Telefono,Categoria,FechaNomb,Titulo,Oficina)
+VALUES
+	('559876542','cmg@ucr.ac.cr','Carlos','Mata','Guzmán','m','1996-03-03','San Jose','875193','Asociado','1988-03-01','Máster','225')
+
+SELECT * FROM PROFESOR
