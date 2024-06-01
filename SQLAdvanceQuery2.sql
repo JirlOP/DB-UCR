@@ -360,7 +360,7 @@ BEGIN -- Open a new code block (optional)
                 inserted AS NEW_TAKES -- "inserted" is the temp table that have the new values do update
             JOIN
                 [GROUP] AS G
-            ON		
+            ON
                 NEW_TAKES.ACRONYM = G.ACRONYM AND
                 NEW_TAKES.NUMBER = G.NUMBER AND
                 NEW_TAKES.SEMESTER = G.SEMESTER AND
@@ -714,8 +714,8 @@ SELECT * FROM @TMP_TABLE;
 
 https://learn.microsoft.com/en-us/sql/relational-databases/cursors?view=sql-server-ver16#type-of-cursors
 
-Cursors are used to retrieve data **row-by-row** 
-from a result set and perform operations on each row. 
+Cursors are used to retrieve data **row-by-row**
+from a result set and perform operations on each row.
 Generally speaking, set-based operations (which operate on all
 the rows in the result set at once) are faster and more efficient in SQL Server,
 so it's usually better to **avoid** using cursors whenever possible
@@ -725,10 +725,10 @@ so it's usually better to **avoid** using cursors whenever possible
 1\. Perform complex **computations or transformations** on each row of a result
 set that cannot easily be expressed in a single SQL statement
 
-2\. Process or handle one row at a time. 
+2\. Process or handle one row at a time.
 This could be necessary for calling a **stored procedure** for each row
 
-3\. Process rows in a specific order, and each row's processing 
+3\. Process rows in a specific order, and each row's processing
 may depend on the previous rows
 
 ## Considerations
