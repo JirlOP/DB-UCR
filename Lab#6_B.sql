@@ -35,13 +35,16 @@ commit transaction t4;
 set implicit_transactions off;
 begin transaction t6;
 Insert into Lleva(CedEstudiante, SiglaCurso,NumGrupo, Semestre, Anno, Nota)
-values('12345', 'CI0127', 1, 1,2019, 85);
+values('559876542', 'CI0125', 1, 2,2024, 85);
+commit transaction t6;
+
+-- Escenario 4: Nivel de aislamiento serializable
 
 -- 23
 set implicit_transactions off;
 begin transaction t8;
 Insert into Lleva(CedEstudiante, SiglaCurso,NumGrupo, Semestre, Anno, Nota)
-values('12345', 'CI0127', 1, 1,2019, 85);
+values('991234567 ', 'CI1312', 1, 2,2024, 80);
 
 -- 25
 commit transaction t8;

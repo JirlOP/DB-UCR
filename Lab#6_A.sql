@@ -1,9 +1,10 @@
 USE C12565
+SELECT * FROM LLEVA
 
 -- Escenario 1: Nivel de aislamiento read uncommitted
 
 -- 6
-set implicit_transactions off;
+set implicit_transactions off; -- default
 set transaction isolation level read uncommitted;
 begin transaction t1; 
 PRINT @@TRANCOUNT
@@ -41,6 +42,8 @@ Select avg(Nota) from Lleva;
 -- 20
 Select avg(Nota) from Lleva;
 commit transaction t5;
+
+-- Escenario 4: Nivel de aislamiento serializable
 
 -- 22
 set implicit_transactions off;
