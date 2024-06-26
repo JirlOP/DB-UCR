@@ -17,6 +17,7 @@ FROM dbo.SalesOrderDetail;
 -- para mejorar el rendimiento de la consulta:
 SELECT ProductID
 FROM dbo.SalesOrderDetail;
+CREATE INDEX IndexProductID ON dbo.SalesOrderDetail(ProductID);
 
 -- f
 SELECT ProductID
@@ -36,6 +37,8 @@ WHERE TotalDue BETWEEN 500 AND 40000;
 -- d
 -- crear indice sobre 'TotalDue' de la tabla 'dbo.SalesOrderHeader'
 -- para mejorar el rendimiento de la consulta
+CREATE INDEX IndexTotalDue ON dbo.SalesOrderHeader(TotalDue);
+
 
 -- e
 SELECT *
@@ -56,13 +59,15 @@ WHERE TotalDue BETWEEN 500 AND 40000;
 -- Elimine indice creado en 'd'
 -- Cree uno nuevo segun recomendacion de SQL Server
 -- para mejorar el rendimiento de la consulta 'f'
+CREATE INDEX TotalDueSalesOrderIDInxex ON dbo.SalesOrderHeader(TotalDue) 
+	INCLUDE(SalesOrderID)
 
 -- k
 SELECT TotalDue
 FROM dbo.SalesOrderHeader
 WHERE TotalDue BETWEEN 500 AND 40000;
 
--- i
+-- l
 SELECT SalesOrderID, TotalDue
 FROM dbo.SalesOrderHeader
 WHERE ABS(TotalDue) BETWEEN 500 AND 40000;
@@ -97,6 +102,11 @@ ON p.BusinessEntityID = h.SalesPersonID;
 
 -- e
 -- mejorar segunda consulta de 'a' creando indices
+CREATE INDEX SalesOrderHeaderIndex ON dbo.SalesOrderHeader(SalesPersonID) -- h
+	INCLUDE(SalesOrderID)
+CREATE INDEX SalesOrderDetailIndex ON dbo.SalesOrderDetail(SalesOrderID,SalesOrderDetailID) -- d
+CREATE INDEX SalesPersonIndex ON dbo.SalesPerson(BusinessEntityID) -- p
+
 
 -- f
 SELECT h.SalesOrderID, d.SalesOrderDetailID, h.SalesPersonID
