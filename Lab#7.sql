@@ -13,6 +13,8 @@ SELECT ProductID
 FROM dbo.SalesOrderDetail;
 
 -- e
+-- Cree indice sobre 'dbo.SalesOrderDetail'
+-- para mejorar el rendimiento de la consulta:
 SELECT ProductID
 FROM dbo.SalesOrderDetail;
 
