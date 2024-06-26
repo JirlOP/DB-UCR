@@ -96,7 +96,7 @@ JOIN dbo.SalesPerson p
 ON p.BusinessEntityID = h.SalesPersonID;
 
 -- e
--- mejorar consulta creando indices
+-- mejorar segunda consulta de 'a' creando indices
 
 -- f
 SELECT h.SalesOrderID, d.SalesOrderDetailID, h.SalesPersonID
