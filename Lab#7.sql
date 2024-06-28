@@ -138,9 +138,28 @@ AND ShipDate > '2014-01-01'
 
 -- c
 -- reescribir 'a' para no tener consulta anidada
+SELECT SalesOrderID, SalesPersonID, ShipDate
+FROM dbo.SalesOrderHeader AS SOH
+JOIN dbo.SalesPerson AS SP
+ON SOH.SalesPersonID = SP.BusinessEntityID	
+WHERE SP.TerritoryID > 5  
+AND SOH.ShipDate > '2014-01-01' 
+
+-- El peso esta en SalesOrderHeader, por lo tanto hay que buscar optimizarla con un indice
+-- Un indice en Shipdate permitiria que la DBMS haga un operador Index Seek, consuminedo menos en el lote.
 
 -- e
 -- cree indices para mejorar la consulta de 'c'
+CREATE INDEX SalesOrderHeaderOptimizationIndex ON dbo.SalesOrderHeader(SalesPersonID,ShipDate)
+	INCLUDE(SalesOrderID)
+CREATE INDEX SalesPersonOptimizationIndex ON dbo.SalesPerson(BusinessEntityID, TerritoryID)
 
 -- f
 -- vuelva a ejecutar 'c'
+SELECT SalesOrderID, SalesPersonID, ShipDate
+FROM dbo.SalesOrderHeader AS SOH
+JOIN dbo.SalesPerson AS SP
+ON SOH.SalesPersonID = SP.BusinessEntityID	
+WHERE SP.TerritoryID > 5  
+AND SOH.ShipDate > '2014-01-01' 
+
